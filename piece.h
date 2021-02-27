@@ -59,25 +59,44 @@ class King : public PieceBase<King>
    bool canOccupy_(const Position& pos, std::optional<Square> loc) const;
 };
 
-struct Queen : public PieceBase<Queen>
+class Queen : public PieceBase<Queen>
 {
+   friend class PieceBase<Queen>;
+
+ private:
    std::vector<Square> moves_(const Position& pos) const;
 };
 
-struct Rook : public PieceBase<Rook>
+class Rook : public PieceBase<Rook>
 {
+   friend class PieceBase<Rook>;
+
+ private:
+   std::vector<Square> moves_(const Position& pos) const;
 };
 
-struct Bishop : public PieceBase<Bishop>
+class Bishop : public PieceBase<Bishop>
 {
+   friend class PieceBase<Bishop>;
+
+ private:
+   std::vector<Square> moves_(const Position& pos) const;
 };
 
-struct Knight : public PieceBase<Knight>
+class Knight : public PieceBase<Knight>
 {
+   friend class PieceBase<Knight>;
+
+ private:
+   std::vector<Square> moves_(const Position& pos) const;
 };
 
-struct Pawn : public PieceBase<Pawn>
+class Pawn : public PieceBase<Pawn>
 {
+   friend class PieceBase<Pawn>;
+
+ private:
+   std::vector<Square> moves_(const Position& pos) const;
 };
 
 
