@@ -56,3 +56,11 @@ inline std::optional<Square> operator+(Square from, Offset off)
       return to;
    return std::nullopt;
 }
+
+
+inline std::optional<Square> operator+(std::optional<Square> from, Offset off)
+{
+   if (from.has_value())
+      return *from + off;
+   return std::nullopt;
+}

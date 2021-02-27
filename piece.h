@@ -4,6 +4,7 @@
 //
 #pragma once
 #include "square.h"
+#include <optional>
 #include <variant>
 #include <vector>
 
@@ -12,14 +13,67 @@ struct Position;
 
 ///////////////////
 
-template <typename DerivedPiece> struct PieceBase
+template <typename DerivedPiece> class PieceBase
 {
-   Square loc;
+ public:
+   Square location() const { return m_loc; }
+   bool isLegalMove(const Position& pos, Square loc) const;
+   bool isLegalMove(const Position& pos, std::optional<Square> loc) const;
+
+ private:
+   const DerivedPiece& derived() const { return static_cast<const DerivedPiece&>(*this); }
+   DerivedPiece& derived() { return static_cast<DerivedPiece&>(*this); }
+
+private:
+   Square m_loc;
 };
 
-struct King : public PieceBase<King>
+
+template <typename DerivedPiece>
+bool PieceBase<DerivedPiece>::isLegalMove(const Position& pos, Square loc) const
 {
+   return derived().isLegalMove_(pos, loc);
+}
+
+
+template <typename DerivedPiece>
+bool PieceBase<DerivedPiece>::isLegalMove(const Position& pos,
+                                          std::optional<Square> loc) const
+{
+   if (loc.has_value())
+      return isLegalMove(pos, *loc);
+   return false;
+}
+
+
+template <typename DerivedPiece>
+bool operator==(const DerivedPiece& a, const DerivedPiece& b)
+{
+   return a.location() == b.location();
+}
+
+
+template <typename DerivedPiece>
+bool operator==(const std::optional<DerivedPiece>& a,
+                const std::optional<DerivedPiece>& b)
+{
+   if (a.has_value() && b.has_value())
+      return *a == *b;
+   return a.has_value() == b.has_value();
+}
+
+
+///////////////////
+
+class King : public PieceBase<King>
+{
+   friend class PieceBase<King>;
+
+ public:
    std::vector<Square> moves(const Position& pos) const;
+
+ private:
+   bool isLegalMove_(const Position& pos, Square loc) const;
 };
 
 struct Queen : public PieceBase<Queen>
@@ -52,7 +106,18 @@ struct Pawn : public PieceBase<Pawn>
 
 using Piece = std::variant<King, Queen, Rook, Bishop, Knight, Pawn>;
 
+
+inline bool operator==(const Piece& a, const std::optional<Piece>& b)
+{
+   return b.has_value() && a == *b;
+}
+
+inline bool operator==(const std::optional<Piece>& a, const Piece& b)
+{
+   return b == a;
+}
+
 inline bool isOnSquare(const Piece& piece, Square loc)
 {
-   return std::visit([&loc](const auto& elem) { return elem.loc == loc; }, piece);
+   return std::visit([&loc](const auto& elem) { return elem.location() == loc; }, piece);
 }

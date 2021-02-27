@@ -14,4 +14,5 @@ struct Position
    std::vector<Piece> pieces;
 
    bool isOccupied(Square loc) const;
+   std::optional<Piece> operator[](Square loc) const;
 };
