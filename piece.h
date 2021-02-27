@@ -13,11 +13,21 @@ struct Position;
 
 ///////////////////
 
+enum class Color
+{
+   White,
+   Black
+};
+
+
 template <typename DerivedPiece> class PieceBase
 {
  public:
+   PieceBase(Color color, Square loc);
+
    // Common interface for all pieces.
    Square location() const { return m_loc; }
+   Color color() const { return m_color; }
    std::vector<Square> moves(const Position& pos) const { return derived().moves_(pos); }
 
  private:
@@ -25,14 +35,21 @@ template <typename DerivedPiece> class PieceBase
    DerivedPiece& derived() { return static_cast<DerivedPiece&>(*this); }
 
  private:
+   Color m_color = Color::White;
    Square m_loc;
 };
 
 
 template <typename DerivedPiece>
+PieceBase<DerivedPiece>::PieceBase(Color color, Square loc) : m_color{color}, m_loc{loc}
+{
+}
+
+
+template <typename DerivedPiece>
 bool operator==(const DerivedPiece& a, const DerivedPiece& b)
 {
-   return a.location() == b.location();
+   return a.color() == b.color() && a.location() == b.location();
 }
 
 
@@ -52,6 +69,9 @@ class King : public PieceBase<King>
 {
    friend class PieceBase<King>;
 
+ public:
+   using PieceBase<King>::PieceBase;
+
  private:
    std::vector<Square> moves_(const Position& pos) const;
    // Checks if piece can occupy the location regardless of whether it can get there.
@@ -63,6 +83,9 @@ class Queen : public PieceBase<Queen>
 {
    friend class PieceBase<Queen>;
 
+ public:
+   using PieceBase<Queen>::PieceBase;
+
  private:
    std::vector<Square> moves_(const Position& pos) const;
 };
@@ -70,6 +93,9 @@ class Queen : public PieceBase<Queen>
 class Rook : public PieceBase<Rook>
 {
    friend class PieceBase<Rook>;
+
+ public:
+   using PieceBase<Rook>::PieceBase;
 
  private:
    std::vector<Square> moves_(const Position& pos) const;
@@ -79,6 +105,9 @@ class Bishop : public PieceBase<Bishop>
 {
    friend class PieceBase<Bishop>;
 
+ public:
+   using PieceBase<Bishop>::PieceBase;
+
  private:
    std::vector<Square> moves_(const Position& pos) const;
 };
@@ -87,6 +116,9 @@ class Knight : public PieceBase<Knight>
 {
    friend class PieceBase<Knight>;
 
+ public:
+   using PieceBase<Knight>::PieceBase;
+
  private:
    std::vector<Square> moves_(const Position& pos) const;
 };
@@ -94,6 +126,9 @@ class Knight : public PieceBase<Knight>
 class Pawn : public PieceBase<Pawn>
 {
    friend class PieceBase<Pawn>;
+
+ public:
+   using PieceBase<Pawn>::PieceBase;
 
  private:
    std::vector<Square> moves_(const Position& pos) const;
