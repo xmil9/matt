@@ -81,9 +81,6 @@ class King : public PieceBase<King>
 
  private:
    std::vector<Square> moves_(const Position& pos) const;
-   // Checks if piece can occupy the location regardless of whether it can get there.
-   bool canOccupy_(const Position& pos, Square loc) const;
-   bool canOccupy_(const Position& pos, std::optional<Square> loc) const;
 };
 
 class Queen : public PieceBase<Queen>

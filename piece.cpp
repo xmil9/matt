@@ -92,22 +92,8 @@ std::vector<Square> King::moves_(const Position& pos) const
 
    std::vector<Square> moves;
    collectMovesTo(location(), color(), pos, begin(Offsets), end(Offsets), moves);
+   // todo - filter out moves that lead into check
    return moves;
-}
-
-
-bool King::canOccupy_(const Position& pos, Square loc) const
-{
-   // todo - check if king would be in check on square.
-   return !pos.isOccupiedBy(loc, color());
-}
-
-
-bool King::canOccupy_(const Position& pos, std::optional<Square> loc) const
-{
-   if (loc.has_value())
-      return canOccupy_(pos, *loc);
-   return false;
 }
 
 
@@ -179,18 +165,31 @@ std::vector<Square> Pawn::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
-   std::vector<Square> result;
+   const Offset dir{0, color() == Color::White ? 1 : -1};
 
-   assert(false && "todo");
-   // const Offset rankDir{0, isWhite ? 1 : -1};
-   // static const std::array<Offset, 8> Moves{Offset{0, 1}, {2, -1}, {-2, 1}, {-2, -1},
-   //                                         {1, 2},       {-1, 2}, {1, -2}, {-1, -2}};
-   // for (const auto& off : Moves)
-   //{
-   //   std::optional<Square> to = location() + off;
-   //   if (!pos.isOccupied(*to))
-   //      result.push_back(*to);
-   //}
+   std::vector<Square> moves;
 
-   return result;
+   // Move one square forward.
+   if (const auto to = location() + dir; to.has_value())
+      collectMoveTo(*to, color(), pos, moves);
+
+   // Move two squares forward from starting square.
+   const char startRank = color() == Color::White ? 2 : 7;
+   if (location().rank == startRank)
+      if (const auto to = location() + 2 * dir; to.has_value())
+         collectMoveTo(*to, color(), pos, moves);
+
+   // Take diagonally to lower file.
+   if (const auto to = location() + dir + Offset{-1, 0}; to.has_value())
+      if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
+         moves.push_back(*to);
+
+   // Take diagonally to higher file.
+   if (const auto to = location() + dir + Offset{1, 0}; to.has_value())
+      if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
+         moves.push_back(*to);
+
+   // todo - take en passant
+
+   return moves;
 }

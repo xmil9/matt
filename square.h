@@ -47,6 +47,17 @@ struct Offset
 };
 
 
+inline Offset operator*(Offset off, int v)
+{
+   return Offset{off.df * v, off.dr * v};
+}
+
+inline Offset operator*(int v, Offset off)
+{
+   return off * v;
+}
+
+
 ///////////////////
 
 inline std::optional<Square> operator+(Square from, Offset off)
