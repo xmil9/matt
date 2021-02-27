@@ -19,6 +19,13 @@ enum class Color
    Black
 };
 
+inline Color operator!(Color color)
+{
+   return color == Color::White ? Color::Black : Color::White;
+}
+
+
+///////////////////
 
 template <typename DerivedPiece> class PieceBase
 {
@@ -148,6 +155,11 @@ inline bool operator==(const Piece& a, const std::optional<Piece>& b)
 inline bool operator==(const std::optional<Piece>& a, const Piece& b)
 {
    return b == a;
+}
+
+inline bool hasColor(const Piece& piece, Color color)
+{
+   return std::visit([&color](const auto& elem) { return elem.color() == color; }, piece);
 }
 
 inline bool isOnSquare(const Piece& piece, Square loc)

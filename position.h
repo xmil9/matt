@@ -14,5 +14,6 @@ struct Position
    std::vector<Piece> pieces;
 
    bool isOccupied(Square loc) const;
+   bool isOccupiedBy(Square loc, Color bySide) const;
    std::optional<Piece> operator[](Square loc) const;
 };

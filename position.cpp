@@ -10,7 +10,14 @@
 
 bool Position::isOccupied(Square loc) const
 {
-   return operator[](loc).has_value();
+   return (*this)[loc].has_value();
+}
+
+
+bool Position::isOccupiedBy(Square loc, Color bySide) const
+{
+   const auto piece = (*this)[loc];
+   return piece.has_value() && hasColor(*piece, bySide);
 }
 
 
