@@ -16,34 +16,17 @@ struct Position;
 template <typename DerivedPiece> class PieceBase
 {
  public:
+   // Common interface for all pieces.
    Square location() const { return m_loc; }
-   bool isLegalMove(const Position& pos, Square loc) const;
-   bool isLegalMove(const Position& pos, std::optional<Square> loc) const;
+   std::vector<Square> moves(const Position& pos) const { return derived().moves_(pos); }
 
  private:
    const DerivedPiece& derived() const { return static_cast<const DerivedPiece&>(*this); }
    DerivedPiece& derived() { return static_cast<DerivedPiece&>(*this); }
 
-private:
+ private:
    Square m_loc;
 };
-
-
-template <typename DerivedPiece>
-bool PieceBase<DerivedPiece>::isLegalMove(const Position& pos, Square loc) const
-{
-   return derived().isLegalMove_(pos, loc);
-}
-
-
-template <typename DerivedPiece>
-bool PieceBase<DerivedPiece>::isLegalMove(const Position& pos,
-                                          std::optional<Square> loc) const
-{
-   if (loc.has_value())
-      return isLegalMove(pos, *loc);
-   return false;
-}
 
 
 template <typename DerivedPiece>
@@ -69,36 +52,32 @@ class King : public PieceBase<King>
 {
    friend class PieceBase<King>;
 
- public:
-   std::vector<Square> moves(const Position& pos) const;
-
  private:
-   bool isLegalMove_(const Position& pos, Square loc) const;
+   std::vector<Square> moves_(const Position& pos) const;
+   // Checks if piece can occupy the location regardless of whether it can get there.
+   bool canOccupy_(const Position& pos, Square loc) const;
+   bool canOccupy_(const Position& pos, std::optional<Square> loc) const;
 };
 
 struct Queen : public PieceBase<Queen>
 {
-   std::vector<Square> moves(const Position& pos) const;
+   std::vector<Square> moves_(const Position& pos) const;
 };
 
 struct Rook : public PieceBase<Rook>
 {
-   std::vector<Square> moves(const Position& pos) const;
 };
 
 struct Bishop : public PieceBase<Bishop>
 {
-   std::vector<Square> moves(const Position& pos) const;
 };
 
 struct Knight : public PieceBase<Knight>
 {
-   std::vector<Square> moves(const Position& pos) const;
 };
 
 struct Pawn : public PieceBase<Pawn>
 {
-   std::vector<Square> moves(const Position& pos) const;
 };
 
 
