@@ -35,6 +35,7 @@ template <typename DerivedPiece> class PieceBase
    // Common interface for all pieces.
    Square location() const { return m_loc; }
    Color color() const { return m_color; }
+   std::string notation() const { return derived().notation_(); }
    std::vector<Square> moves(const Position& pos) const { return derived().moves_(pos); }
 
  private:
@@ -80,6 +81,7 @@ class King : public PieceBase<King>
    using PieceBase<King>::PieceBase;
 
  private:
+   std::string notation_() const { return "K"; }
    std::vector<Square> moves_(const Position& pos) const;
 };
 
@@ -91,6 +93,7 @@ class Queen : public PieceBase<Queen>
    using PieceBase<Queen>::PieceBase;
 
  private:
+   std::string notation_() const { return "Q"; }
    std::vector<Square> moves_(const Position& pos) const;
 };
 
@@ -102,6 +105,7 @@ class Rook : public PieceBase<Rook>
    using PieceBase<Rook>::PieceBase;
 
  private:
+   std::string notation_() const { return "R"; }
    std::vector<Square> moves_(const Position& pos) const;
 };
 
@@ -113,6 +117,7 @@ class Bishop : public PieceBase<Bishop>
    using PieceBase<Bishop>::PieceBase;
 
  private:
+   std::string notation_() const { return "B"; }
    std::vector<Square> moves_(const Position& pos) const;
 };
 
@@ -121,6 +126,7 @@ class Knight : public PieceBase<Knight>
    friend class PieceBase<Knight>;
 
  public:
+   std::string notation_() const { return "N"; }
    using PieceBase<Knight>::PieceBase;
 
  private:
@@ -135,6 +141,7 @@ class Pawn : public PieceBase<Pawn>
    using PieceBase<Pawn>::PieceBase;
 
  private:
+   std::string notation_() const { return ""; }
    std::vector<Square> moves_(const Position& pos) const;
 };
 
@@ -157,6 +164,11 @@ inline bool operator==(const std::optional<Piece>& a, const Piece& b)
 inline bool hasColor(const Piece& piece, Color color)
 {
    return std::visit([&color](const auto& elem) { return elem.color() == color; }, piece);
+}
+
+inline std::string notation(const Piece& piece)
+{
+   return std::visit([](const auto& elem) { return elem.notation(); }, piece);
 }
 
 inline bool isOnSquare(const Piece& piece, Square loc)

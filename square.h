@@ -5,6 +5,7 @@
 #pragma once
 #include <cassert>
 #include <optional>
+#include <string>
 
 
 ///////////////////
@@ -17,12 +18,22 @@ struct Square
    char file = 0;
    char rank = 0;
 
-   operator bool() const
-   {
-      return file >= '1' && file <= '8' && rank >= 'a' && rank <= 'h';
-   }
+   operator bool() const;
    bool operator!() const { return !operator bool(); }
+   std::string notation() const;
 };
+
+
+inline Square::operator bool() const
+{
+   return file >= '1' && file <= '8' && rank >= 'a' && rank <= 'h';
+}
+
+
+inline std::string Square::notation() const
+{
+   return std::string{file} + std::string{rank};
+}
 
 
 inline bool operator==(Square a, Square b)

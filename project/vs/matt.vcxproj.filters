@@ -4,10 +4,12 @@
     <ClCompile Include="..\..\matt.cpp" />
     <ClCompile Include="..\..\position.cpp" />
     <ClCompile Include="..\..\piece.cpp" />
+    <ClCompile Include="..\..\notation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\position.h" />
     <ClInclude Include="..\..\piece.h" />
     <ClInclude Include="..\..\square.h" />
+    <ClInclude Include="..\..\notation.h" />
   </ItemGroup>
 </Project>
