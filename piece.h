@@ -8,7 +8,7 @@
 #include <variant>
 #include <vector>
 
-struct Position;
+class Position;
 
 
 ///////////////////

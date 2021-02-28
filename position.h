@@ -3,17 +3,21 @@
 // MIT license
 //
 #pragma once
+#include "notation.h"
 #include "piece.h"
 #include <vector>
 
 
 ///////////////////
 
-struct Position
+class Position
 {
-   std::vector<Piece> pieces;
-
+ public:
    bool isOccupied(Square loc) const;
    bool isOccupiedBy(Square loc, Color bySide) const;
    std::optional<Piece> operator[](Square loc) const;
+
+ private:
+   std::vector<Piece> pieces;
+   Record m_record;
 };
