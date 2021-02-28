@@ -29,7 +29,7 @@ bool collectMoveTo(Square to, Color color, const Position& pos,
    else
    {
       // Occupied square:
-      // - can move to it if occupied by other color (take)
+      // - can move to it if occupied by other color (capture)
       // - further squares in this direction are not accessible
       if (!hasColor(*piece, color))
          moves.push_back(to);
@@ -179,17 +179,17 @@ std::vector<Square> Pawn::moves_(const Position& pos) const
       if (const auto to = location() + 2 * dir; to.has_value())
          collectMoveTo(*to, color(), pos, moves);
 
-   // Take diagonally to lower file.
+   // Capture diagonally to lower file.
    if (const auto to = location() + dir + Offset{-1, 0}; to.has_value())
       if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
          moves.push_back(*to);
 
-   // Take diagonally to higher file.
+   // Capture diagonally to higher file.
    if (const auto to = location() + dir + Offset{1, 0}; to.has_value())
       if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
          moves.push_back(*to);
 
-   // todo - take en passant
+   // todo - capture en passant
 
    return moves;
 }
