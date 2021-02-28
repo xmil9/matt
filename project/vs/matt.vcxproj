@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\position.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\move.h" />
     <ClInclude Include="..\..\notation.h" />
     <ClInclude Include="..\..\piece.h" />
     <ClInclude Include="..\..\position.h" />

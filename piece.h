@@ -8,6 +8,7 @@
 #include <variant>
 #include <vector>
 
+class Move;
 class Position;
 
 
@@ -27,16 +28,26 @@ inline Color operator!(Color color)
 
 ///////////////////
 
-template <typename DerivedPiece> class PieceBase
+// Common interface for all pieces.
+struct PieceCommon
+{
+   virtual Square location() const = 0;
+   virtual Color color() const = 0;
+   virtual std::string notation() const = 0;
+   virtual std::vector<Move> moves(const Position& pos) const = 0;
+};
+
+
+template <typename DerivedPiece> class PieceBase : public PieceCommon
 {
  public:
    PieceBase(Color color, Square loc);
 
    // Common interface for all pieces.
-   Square location() const { return m_loc; }
-   Color color() const { return m_color; }
-   std::string notation() const { return derived().notation_(); }
-   std::vector<Square> moves(const Position& pos) const { return derived().moves_(pos); }
+   Square location() const override { return m_loc; }
+   Color color() const override { return m_color; }
+   std::string notation() const override { return derived().notation_(); }
+   std::vector<Move> moves(const Position& pos) const override;
 
  private:
    const DerivedPiece& derived() const { return static_cast<const DerivedPiece&>(*this); }
@@ -51,6 +62,12 @@ template <typename DerivedPiece> class PieceBase
 template <typename DerivedPiece>
 PieceBase<DerivedPiece>::PieceBase(Color color, Square loc) : m_color{color}, m_loc{loc}
 {
+}
+
+template <typename DerivedPiece>
+std::vector<Move> PieceBase<DerivedPiece>::moves(const Position& pos) const
+{
+   return derived().moves_(pos);
 }
 
 
@@ -82,7 +99,7 @@ class King : public PieceBase<King>
 
  private:
    std::string notation_() const { return "K"; }
-   std::vector<Square> moves_(const Position& pos) const;
+   std::vector<Move> moves_(const Position& pos) const;
 };
 
 class Queen : public PieceBase<Queen>
@@ -94,7 +111,7 @@ class Queen : public PieceBase<Queen>
 
  private:
    std::string notation_() const { return "Q"; }
-   std::vector<Square> moves_(const Position& pos) const;
+   std::vector<Move> moves_(const Position& pos) const;
 };
 
 class Rook : public PieceBase<Rook>
@@ -106,7 +123,7 @@ class Rook : public PieceBase<Rook>
 
  private:
    std::string notation_() const { return "R"; }
-   std::vector<Square> moves_(const Position& pos) const;
+   std::vector<Move> moves_(const Position& pos) const;
 };
 
 class Bishop : public PieceBase<Bishop>
@@ -118,7 +135,7 @@ class Bishop : public PieceBase<Bishop>
 
  private:
    std::string notation_() const { return "B"; }
-   std::vector<Square> moves_(const Position& pos) const;
+   std::vector<Move> moves_(const Position& pos) const;
 };
 
 class Knight : public PieceBase<Knight>
@@ -130,7 +147,7 @@ class Knight : public PieceBase<Knight>
    using PieceBase<Knight>::PieceBase;
 
  private:
-   std::vector<Square> moves_(const Position& pos) const;
+   std::vector<Move> moves_(const Position& pos) const;
 };
 
 class Pawn : public PieceBase<Pawn>
@@ -142,7 +159,7 @@ class Pawn : public PieceBase<Pawn>
 
  private:
    std::string notation_() const { return ""; }
-   std::vector<Square> moves_(const Position& pos) const;
+   std::vector<Move> moves_(const Position& pos) const;
 };
 
 
@@ -161,9 +178,19 @@ inline bool operator==(const std::optional<Piece>& a, const Piece& b)
    return b == a;
 }
 
-inline bool hasColor(const Piece& piece, Color color)
+inline Square location(const Piece& piece)
 {
-   return std::visit([&color](const auto& elem) { return elem.color() == color; }, piece);
+   return std::visit([](const auto& elem) { return elem.location(); }, piece);
+}
+
+inline Color color(const Piece& piece)
+{
+   return std::visit([](const auto& elem) { return elem.color(); }, piece);
+}
+
+inline bool hasColor(const Piece& piece, Color c)
+{
+   return color(piece) == c;
 }
 
 inline std::string notation(const Piece& piece)
@@ -171,7 +198,7 @@ inline std::string notation(const Piece& piece)
    return std::visit([](const auto& elem) { return elem.notation(); }, piece);
 }
 
-inline bool isOnSquare(const Piece& piece, Square loc)
+inline bool isOnSquare(const Piece& piece, Square at)
 {
-   return std::visit([&loc](const auto& elem) { return elem.location() == loc; }, piece);
+   return std::visit([&at](const auto& elem) { return elem.location() == at; }, piece);
 }

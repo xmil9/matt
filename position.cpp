@@ -3,6 +3,7 @@
 // MIT license
 //
 #include "position.h"
+#include "move.h"
 #include <algorithm>
 
 

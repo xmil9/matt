@@ -11,5 +11,6 @@
     <ClInclude Include="..\..\piece.h" />
     <ClInclude Include="..\..\square.h" />
     <ClInclude Include="..\..\notation.h" />
+    <ClInclude Include="..\..\move.h" />
   </ItemGroup>
 </Project>

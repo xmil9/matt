@@ -3,6 +3,7 @@
 // MIT license
 //
 #include "piece.h"
+#include "move.h"
 #include "position.h"
 #include <algorithm>
 #include <array>
@@ -13,40 +14,51 @@ namespace
 {
 ///////////////////
 
+inline Move makeMove(const Piece& piece, Square to, const Position& pos)
+{
+   return Move{piece, to, noteMove(piece, to, pos)};
+}
+
+Move makeCapture(const Piece& piece, Square to, const Position& pos)
+{
+   return Move{piece, to, noteCapture(piece, to, pos)};
+}
+
+
 // Adds move to a given square to a collection if the move is possible.
 // Returns whether the destination square was occupied by a piece.
-bool collectMoveTo(Square to, Color color, const Position& pos,
-                   std::vector<Square>& moves)
+bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
+                   std::vector<Move>& moves)
 {
-   const auto& piece = pos[to];
-   if (!piece)
+   const auto& occupant = pos[to];
+   if (!occupant)
    {
       // Open square:
       // - can move to it
       // - further squares in this direction are accessible
-      moves.push_back(to);
+      moves.push_back(makeMove(piece, to, pos));
    }
    else
    {
       // Occupied square:
       // - can move to it if occupied by other color (capture)
       // - further squares in this direction are not accessible
-      if (!hasColor(*piece, color))
-         moves.push_back(to);
+      if (!hasColor(*occupant, color(piece)))
+         moves.push_back(makeCapture(piece, to, pos));
    }
 
-   return piece.has_value();
+   return occupant.has_value();
 }
 
 
 // Adds the possible moves in a given direction to a collection.
-void collectMovesInDirection(Square from, Color color, const Position& pos, Offset dir,
-                             std::vector<Square>& moves)
+void collectMovesInDirection(const Piece& piece, const Position& pos, Offset dir,
+                             std::vector<Move>& moves)
 {
-   std::optional<Square> to = from + dir;
+   std::optional<Square> to = location(piece) + dir;
    while (to.has_value())
    {
-      if (collectMoveTo(*to, color, pos, moves))
+      if (collectMoveTo(piece, *to, pos, moves))
          to = std::nullopt;
       else
          to = to + dir;
@@ -56,25 +68,25 @@ void collectMovesInDirection(Square from, Color color, const Position& pos, Offs
 
 // Adds the possible moves in given directions to a collection.
 template <typename DirectionIter>
-void collectMovesInDirections(Square from, Color color, const Position& pos,
+void collectMovesInDirections(const Piece& piece, const Position& pos,
                               DirectionIter first, DirectionIter last,
-                              std::vector<Square>& moves)
+                              std::vector<Move>& moves)
 {
    std::for_each(first, last, [&](const auto& dir) {
-      collectMovesInDirection(from, color, pos, dir, moves);
+      collectMovesInDirection(piece, pos, dir, moves);
    });
 }
 
 
 // Adds the possible moves for given offsets to a collection.
 template <typename OffsetIter>
-void collectMovesTo(Square from, Color color, const Position& pos, OffsetIter first,
-                    OffsetIter last, std::vector<Square>& moves)
+void collectMovesTo(const Piece& piece, const Position& pos, OffsetIter first,
+                    OffsetIter last, std::vector<Move>& moves)
 {
    std::for_each(first, last, [&](const auto& off) {
-      std::optional<Square> to = from + off;
+      std::optional<Square> to = location(piece) + off;
       if (to.has_value())
-         collectMoveTo(*to, color, pos, moves);
+         collectMoveTo(piece, *to, pos, moves);
    });
 }
 
@@ -83,15 +95,15 @@ void collectMovesTo(Square from, Color color, const Position& pos, OffsetIter fi
 
 ///////////////////
 
-std::vector<Square> King::moves_(const Position& pos) const
+std::vector<Move> King::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
    static const std::array<Offset, 8> Offsets{Offset{1, 1}, {1, 0},  {1, -1}, {0, 1},
                                               {0, -1},      {-1, 1}, {-1, 0}, {-1, -1}};
 
-   std::vector<Square> moves;
-   collectMovesTo(location(), color(), pos, begin(Offsets), end(Offsets), moves);
+   std::vector<Move> moves;
+   collectMovesTo(*this, pos, begin(Offsets), end(Offsets), moves);
    // todo - filter out moves that lead into check
    return moves;
 }
@@ -99,95 +111,92 @@ std::vector<Square> King::moves_(const Position& pos) const
 
 ///////////////////
 
-std::vector<Square> Queen::moves_(const Position& pos) const
+std::vector<Move> Queen::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
    static const std::array<Offset, 8> Directions{
       Offset{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
 
-   std::vector<Square> moves;
-   collectMovesInDirections(location(), color(), pos, begin(Directions), end(Directions),
-                            moves);
+   std::vector<Move> moves;
+   collectMovesInDirections(*this, pos, begin(Directions), end(Directions), moves);
    return moves;
 }
 
 
 ///////////////////
 
-std::vector<Square> Rook::moves_(const Position& pos) const
+std::vector<Move> Rook::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
    static const std::array<Offset, 4> Directions{Offset{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 
-   std::vector<Square> moves;
-   collectMovesInDirections(location(), color(), pos, begin(Directions), end(Directions),
-                            moves);
+   std::vector<Move> moves;
+   collectMovesInDirections(*this, pos, begin(Directions), end(Directions), moves);
    return moves;
 }
 
 
 ///////////////////
 
-std::vector<Square> Bishop::moves_(const Position& pos) const
+std::vector<Move> Bishop::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
    static const std::array<Offset, 4> Directions{
       Offset{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
-   std::vector<Square> moves;
-   collectMovesInDirections(location(), color(), pos, begin(Directions), end(Directions),
-                            moves);
+   std::vector<Move> moves;
+   collectMovesInDirections(*this, pos, begin(Directions), end(Directions), moves);
    return moves;
 }
 
 
 ///////////////////
 
-std::vector<Square> Knight::moves_(const Position& pos) const
+std::vector<Move> Knight::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
    static const std::array<Offset, 8> Offsets{Offset{2, 1}, {2, -1}, {-2, 1}, {-2, -1},
                                               {1, 2},       {-1, 2}, {1, -2}, {-1, -2}};
 
-   std::vector<Square> moves;
-   collectMovesTo(location(), color(), pos, begin(Offsets), end(Offsets), moves);
+   std::vector<Move> moves;
+   collectMovesTo(*this, pos, begin(Offsets), end(Offsets), moves);
    return moves;
 }
 
 
 ///////////////////
 
-std::vector<Square> Pawn::moves_(const Position& pos) const
+std::vector<Move> Pawn::moves_(const Position& pos) const
 {
    assert(pos[location()] == Piece{*this});
 
    const Offset dir{0, color() == Color::White ? 1 : -1};
 
-   std::vector<Square> moves;
+   std::vector<Move> moves;
 
    // Move one square forward.
    if (const auto to = location() + dir; to.has_value())
-      collectMoveTo(*to, color(), pos, moves);
+      collectMoveTo(*this, *to, pos, moves);
 
    // Move two squares forward from starting square.
    const char startRank = color() == Color::White ? 2 : 7;
    if (location().rank == startRank)
       if (const auto to = location() + 2 * dir; to.has_value())
-         collectMoveTo(*to, color(), pos, moves);
+         collectMoveTo(*this, *to, pos, moves);
 
    // Capture diagonally to lower file.
    if (const auto to = location() + dir + Offset{-1, 0}; to.has_value())
       if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
-         moves.push_back(*to);
+         moves.push_back(makeCapture(*this, *to, pos));
 
    // Capture diagonally to higher file.
    if (const auto to = location() + dir + Offset{1, 0}; to.has_value())
       if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
-         moves.push_back(*to);
+         moves.push_back(makeCapture(*this, *to, pos));
 
    // todo - capture en passant
 
