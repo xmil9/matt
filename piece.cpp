@@ -7,6 +7,7 @@
 #include "position.h"
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <iterator>
 
 
@@ -43,7 +44,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
       // Occupied square:
       // - can move to it if occupied by other color (capture)
       // - further squares in this direction are not accessible
-      if (!hasColor(*occupant, color(piece)))
+      if (occupant->color() != piece.color())
          moves.push_back(makeCapture(piece, to, pos));
    }
 
@@ -55,7 +56,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
 void collectMovesInDirection(const Piece& piece, const Position& pos, Offset dir,
                              std::vector<Move>& moves)
 {
-   std::optional<Square> to = location(piece) + dir;
+   std::optional<Square> to = piece.location() + dir;
    while (to.has_value())
    {
       if (collectMoveTo(piece, *to, pos, moves))
@@ -84,10 +85,115 @@ void collectMovesTo(const Piece& piece, const Position& pos, OffsetIter first,
                     OffsetIter last, std::vector<Move>& moves)
 {
    std::for_each(first, last, [&](const auto& off) {
-      std::optional<Square> to = location(piece) + off;
+      std::optional<Square> to = piece.location() + off;
       if (to.has_value())
          collectMoveTo(piece, *to, pos, moves);
    });
+}
+
+
+///////////////////
+
+std::vector<Move> kingMoves(const Piece& king, const Position& pos)
+{
+   assert(pos[king.location()] == king);
+
+   static const std::array<Offset, 8> Offsets{Offset{1, 1}, {1, 0},  {1, -1}, {0, 1},
+                                              {0, -1},      {-1, 1}, {-1, 0}, {-1, -1}};
+
+   std::vector<Move> moves;
+   collectMovesTo(king, pos, begin(Offsets), end(Offsets), moves);
+   // todo - filter out moves that lead into check
+   return moves;
+}
+
+
+std::vector<Move> queenMoves(const Piece& queen, const Position& pos)
+{
+   assert(pos[queen.location()] == queen);
+
+   static const std::array<Offset, 8> Directions{
+      Offset{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
+
+   std::vector<Move> moves;
+   collectMovesInDirections(queen, pos, begin(Directions), end(Directions), moves);
+   return moves;
+}
+
+
+std::vector<Move> rookMoves(const Piece& rook, const Position& pos)
+{
+   assert(pos[rook.location()] == rook);
+
+   static const std::array<Offset, 4> Directions{Offset{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
+
+   std::vector<Move> moves;
+   collectMovesInDirections(rook, pos, begin(Directions), end(Directions), moves);
+   return moves;
+}
+
+
+std::vector<Move> bishopMoves(const Piece& bishop, const Position& pos)
+{
+   static const std::array<Offset, 4> Directions{
+      Offset{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
+
+   std::vector<Move> moves;
+   collectMovesInDirections(bishop, pos, begin(Directions), end(Directions), moves);
+   return moves;
+}
+
+
+std::vector<Move> knightMoves(const Piece& knight, const Position& pos)
+{
+   assert(pos[knight.location()] == knight);
+
+   static const std::array<Offset, 8> Offsets{Offset{2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+                                              {1, 2},       {-1, 2}, {1, -2}, {-1, -2}};
+
+   std::vector<Move> moves;
+   collectMovesTo(knight, pos, begin(Offsets), end(Offsets), moves);
+   return moves;
+}
+
+
+std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
+{
+   assert(pos[pawn.location()] == pawn);
+
+   const Offset dir{0, pawn.color() == Color::White ? 1 : -1};
+
+   std::vector<Move> moves;
+
+   // Move one square forward.
+   if (const auto to = pawn.location() + dir; to.has_value())
+      collectMoveTo(pawn, *to, pos, moves);
+
+   // Move two squares forward from starting square.
+   const char startRank = pawn.color() == Color::White ? 2 : 7;
+   if (pawn.location().rank == startRank)
+      if (const auto to = pawn.location() + 2 * dir; to.has_value())
+         collectMoveTo(pawn, *to, pos, moves);
+
+   // Capture diagonally to lower file.
+   if (const auto to = pawn.location() + dir + Offset{-1, 0}; to.has_value())
+   {
+      if (const auto target = pos[*to];
+          target.has_value() && pawn.color() != target->color())
+      {
+         moves.push_back(makeCapture(pawn, *to, pos));
+      }
+   }
+
+   // Capture diagonally to higher file.
+   if (const auto to = pawn.location() + dir + Offset{1, 0}; to.has_value())
+      if (const auto target = pos[*to];
+          target.has_value() && pawn.color() != target->color())
+         moves.push_back(makeCapture(pawn, *to, pos));
+
+   // todo - capture en passant
+
+   return moves;
 }
 
 } // namespace
@@ -95,110 +201,47 @@ void collectMovesTo(const Piece& piece, const Position& pos, OffsetIter first,
 
 ///////////////////
 
-std::vector<Move> King::moves_(const Position& pos) const
+std::string Piece::notation() const
 {
-   assert(pos[location()] == Piece{*this});
-
-   static const std::array<Offset, 8> Offsets{Offset{1, 1}, {1, 0},  {1, -1}, {0, 1},
-                                              {0, -1},      {-1, 1}, {-1, 0}, {-1, -1}};
-
-   std::vector<Move> moves;
-   collectMovesTo(*this, pos, begin(Offsets), end(Offsets), moves);
-   // todo - filter out moves that lead into check
-   return moves;
+   switch (m_type)
+   {
+   case Type::King:
+      return "K";
+   case Type::Queen:
+      return "Q";
+   case Type::Rook:
+      return "R";
+   case Type::Bishop:
+      return "B";
+   case Type::Knight:
+      return "N";
+   case Type::Pawn:
+      return "";
+   default:
+      assert(false && "Huh, a new piece type?");
+      return "";
+   }
 }
 
 
-///////////////////
-
-std::vector<Move> Queen::moves_(const Position& pos) const
+std::vector<Move> Piece::moves(const Position& pos) const
 {
-   assert(pos[location()] == Piece{*this});
-
-   static const std::array<Offset, 8> Directions{
-      Offset{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
-
-   std::vector<Move> moves;
-   collectMovesInDirections(*this, pos, begin(Directions), end(Directions), moves);
-   return moves;
-}
-
-
-///////////////////
-
-std::vector<Move> Rook::moves_(const Position& pos) const
-{
-   assert(pos[location()] == Piece{*this});
-
-   static const std::array<Offset, 4> Directions{Offset{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
-
-   std::vector<Move> moves;
-   collectMovesInDirections(*this, pos, begin(Directions), end(Directions), moves);
-   return moves;
-}
-
-
-///////////////////
-
-std::vector<Move> Bishop::moves_(const Position& pos) const
-{
-   assert(pos[location()] == Piece{*this});
-
-   static const std::array<Offset, 4> Directions{
-      Offset{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
-
-   std::vector<Move> moves;
-   collectMovesInDirections(*this, pos, begin(Directions), end(Directions), moves);
-   return moves;
-}
-
-
-///////////////////
-
-std::vector<Move> Knight::moves_(const Position& pos) const
-{
-   assert(pos[location()] == Piece{*this});
-
-   static const std::array<Offset, 8> Offsets{Offset{2, 1}, {2, -1}, {-2, 1}, {-2, -1},
-                                              {1, 2},       {-1, 2}, {1, -2}, {-1, -2}};
-
-   std::vector<Move> moves;
-   collectMovesTo(*this, pos, begin(Offsets), end(Offsets), moves);
-   return moves;
-}
-
-
-///////////////////
-
-std::vector<Move> Pawn::moves_(const Position& pos) const
-{
-   assert(pos[location()] == Piece{*this});
-
-   const Offset dir{0, color() == Color::White ? 1 : -1};
-
-   std::vector<Move> moves;
-
-   // Move one square forward.
-   if (const auto to = location() + dir; to.has_value())
-      collectMoveTo(*this, *to, pos, moves);
-
-   // Move two squares forward from starting square.
-   const char startRank = color() == Color::White ? 2 : 7;
-   if (location().rank == startRank)
-      if (const auto to = location() + 2 * dir; to.has_value())
-         collectMoveTo(*this, *to, pos, moves);
-
-   // Capture diagonally to lower file.
-   if (const auto to = location() + dir + Offset{-1, 0}; to.has_value())
-      if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
-         moves.push_back(makeCapture(*this, *to, pos));
-
-   // Capture diagonally to higher file.
-   if (const auto to = location() + dir + Offset{1, 0}; to.has_value())
-      if (const auto piece = pos[*to]; piece.has_value() && hasColor(*piece, !color()))
-         moves.push_back(makeCapture(*this, *to, pos));
-
-   // todo - capture en passant
-
-   return moves;
+   switch (m_type)
+   {
+   case Type::King:
+      return kingMoves(*this, pos);
+   case Type::Queen:
+      return queenMoves(*this, pos);
+   case Type::Rook:
+      return rookMoves(*this, pos);
+   case Type::Bishop:
+      return bishopMoves(*this, pos);
+   case Type::Knight:
+      return knightMoves(*this, pos);
+   case Type::Pawn:
+      return pawnMoves(*this, pos);
+   default:
+      assert(false && "Huh, a new piece type?");
+      return {};
+   }
 }

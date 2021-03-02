@@ -11,14 +11,14 @@
 std::string noteMove(const Piece& piece, Square to, const Position& /*pos*/)
 {
    // todo - check for ambiguities
-   return notation(piece) + to.notation();
+   return piece.notation() + to.notation();
 }
 
 
 std::string noteCapture(const Piece& piece, Square to, const Position& /*pos*/)
 {
    // todo - check for ambiguities
-   return notation(piece) + std::string("x") + to.notation();
+   return piece.notation() + std::string("x") + to.notation();
 }
 
 

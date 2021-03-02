@@ -28,145 +28,45 @@ inline Color operator!(Color color)
 
 ///////////////////
 
-// Common interface for all pieces.
-struct PieceCommon
-{
-   virtual Square location() const = 0;
-   virtual Color color() const = 0;
-   virtual std::string notation() const = 0;
-   virtual std::vector<Move> moves(const Position& pos) const = 0;
-};
-
-
-template <typename DerivedPiece> class PieceBase : public PieceCommon
+class Piece
 {
  public:
-   PieceBase(Color color, Square loc);
+   enum class Type
+   {
+      King,
+      Queen,
+      Rook,
+      Bishop,
+      Knight,
+      Pawn
+   };
 
-   // Common interface for all pieces.
-   Square location() const override { return m_loc; }
-   Color color() const override { return m_color; }
-   std::string notation() const override { return derived().notation_(); }
-   std::vector<Move> moves(const Position& pos) const override;
+   Piece() = default;
+   Piece(Type type, Color color, Square loc);
+
+   Square location() const { return m_loc; }
+   Color color() const { return m_color; }
+   std::string notation() const;
+   std::vector<Move> moves(const Position& pos) const;
+
+   bool operator==(const Piece& other) const;
 
  private:
-   const DerivedPiece& derived() const { return static_cast<const DerivedPiece&>(*this); }
-   DerivedPiece& derived() { return static_cast<DerivedPiece&>(*this); }
-
- private:
+   Type m_type = Type::Pawn;
    Color m_color = Color::White;
    Square m_loc;
 };
 
 
-template <typename DerivedPiece>
-PieceBase<DerivedPiece>::PieceBase(Color color, Square loc) : m_color{color}, m_loc{loc}
+inline Piece::Piece(Type type, Color color, Square loc)
+: m_type{type}, m_color{color}, m_loc{loc}
 {
 }
 
-template <typename DerivedPiece>
-std::vector<Move> PieceBase<DerivedPiece>::moves(const Position& pos) const
+inline bool Piece::operator==(const Piece& other) const
 {
-   return derived().moves_(pos);
+   return m_type == other.m_type && m_color == other.color() && m_loc == other.location();
 }
-
-
-template <typename DerivedPiece>
-bool operator==(const DerivedPiece& a, const DerivedPiece& b)
-{
-   return a.color() == b.color() && a.location() == b.location();
-}
-
-
-template <typename DerivedPiece>
-bool operator==(const std::optional<DerivedPiece>& a,
-                const std::optional<DerivedPiece>& b)
-{
-   if (a.has_value() && b.has_value())
-      return *a == *b;
-   return a.has_value() == b.has_value();
-}
-
-
-///////////////////
-
-class King : public PieceBase<King>
-{
-   friend class PieceBase<King>;
-
- public:
-   using PieceBase<King>::PieceBase;
-
- private:
-   std::string notation_() const { return "K"; }
-   std::vector<Move> moves_(const Position& pos) const;
-};
-
-class Queen : public PieceBase<Queen>
-{
-   friend class PieceBase<Queen>;
-
- public:
-   using PieceBase<Queen>::PieceBase;
-
- private:
-   std::string notation_() const { return "Q"; }
-   std::vector<Move> moves_(const Position& pos) const;
-};
-
-class Rook : public PieceBase<Rook>
-{
-   friend class PieceBase<Rook>;
-
- public:
-   using PieceBase<Rook>::PieceBase;
-
- private:
-   std::string notation_() const { return "R"; }
-   std::vector<Move> moves_(const Position& pos) const;
-};
-
-class Bishop : public PieceBase<Bishop>
-{
-   friend class PieceBase<Bishop>;
-
- public:
-   using PieceBase<Bishop>::PieceBase;
-
- private:
-   std::string notation_() const { return "B"; }
-   std::vector<Move> moves_(const Position& pos) const;
-};
-
-class Knight : public PieceBase<Knight>
-{
-   friend class PieceBase<Knight>;
-
- public:
-   std::string notation_() const { return "N"; }
-   using PieceBase<Knight>::PieceBase;
-
- private:
-   std::vector<Move> moves_(const Position& pos) const;
-};
-
-class Pawn : public PieceBase<Pawn>
-{
-   friend class PieceBase<Pawn>;
-
- public:
-   using PieceBase<Pawn>::PieceBase;
-
- private:
-   std::string notation_() const { return ""; }
-   std::vector<Move> moves_(const Position& pos) const;
-};
-
-
-///////////////////
-
-using Piece = std::variant<King, Queen, Rook, Bishop, Knight, Pawn>;
-
 
 inline bool operator==(const Piece& a, const std::optional<Piece>& b)
 {
@@ -176,29 +76,4 @@ inline bool operator==(const Piece& a, const std::optional<Piece>& b)
 inline bool operator==(const std::optional<Piece>& a, const Piece& b)
 {
    return b == a;
-}
-
-inline Square location(const Piece& piece)
-{
-   return std::visit([](const auto& elem) { return elem.location(); }, piece);
-}
-
-inline Color color(const Piece& piece)
-{
-   return std::visit([](const auto& elem) { return elem.color(); }, piece);
-}
-
-inline bool hasColor(const Piece& piece, Color c)
-{
-   return color(piece) == c;
-}
-
-inline std::string notation(const Piece& piece)
-{
-   return std::visit([](const auto& elem) { return elem.notation(); }, piece);
-}
-
-inline bool isOnSquare(const Piece& piece, Square at)
-{
-   return std::visit([&at](const auto& elem) { return elem.location() == at; }, piece);
 }
