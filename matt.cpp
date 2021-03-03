@@ -2,10 +2,11 @@
 // Feb-2021, Michael Lindner
 // MIT license
 //
-#include <cstdlib>
+#include "matt.h"
+#include "position.h"
 
 
-int main()
+Position makeMove(const Position& pos)
 {
-   return EXIT_SUCCESS;
+   return pos;
 }
