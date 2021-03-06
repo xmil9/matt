@@ -16,6 +16,11 @@ std::string noteCapture(const Piece& piece, Square to, const Position& pos);
 
 ///////////////////
 
+std::vector<Piece> parsePositionNotation(const std::string& notation);
+
+
+///////////////////
+
 class Record
 {
 public:

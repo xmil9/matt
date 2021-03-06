@@ -47,7 +47,8 @@ class Piece
    Square location() const { return m_loc; }
    Color color() const { return m_color; }
    std::string notation() const;
-   std::vector<Move> moves(const Position& pos) const;
+   std::vector<Move> nextMoves(const Position& pos) const;
+   std::vector<Position> nextPositions(const Position& pos) const;
 
    bool operator==(const Piece& other) const;
 

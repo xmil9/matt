@@ -6,7 +6,20 @@
 #include "position.h"
 
 
-Position makeMove(const Position& pos)
+Position makeMove(const Position& pos, Color side)
 {
+   const auto pieces = pos.pieces(side);
+   for (const auto& piece : pieces)
+   {
+      const auto positions = piece.nextPositions(pos);
+   }
    return pos;
+}
+
+
+Position makeMove(const Position& pos, const Piece& piece)
+{
+   const auto positions = piece.nextPositions(pos);
+   assert(false && "todo");
+   return {};
 }

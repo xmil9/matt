@@ -224,7 +224,7 @@ std::string Piece::notation() const
 }
 
 
-std::vector<Move> Piece::moves(const Position& pos) const
+std::vector<Move> Piece::nextMoves(const Position& pos) const
 {
    switch (m_type)
    {
@@ -244,4 +244,19 @@ std::vector<Move> Piece::moves(const Position& pos) const
       assert(false && "Huh, a new piece type?");
       return {};
    }
+}
+
+
+std::vector<Position> Piece::nextPositions(const Position& pos) const
+{
+   const std::vector<Move> moves = nextMoves(pos);
+
+   std::vector<Position> result;
+   std::transform(begin(moves), end(moves), std::back_inserter(result),
+                  [&pos](const auto& move) {
+                     Position next = pos;
+                     next.makeMove(move);
+                     return next;
+                  });
+   return result;
 }

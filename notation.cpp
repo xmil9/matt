@@ -24,6 +24,16 @@ std::string noteCapture(const Piece& piece, Square to, const Position& /*pos*/)
 
 ///////////////////
 
+std::vector<Piece> parsePositionNotation(const std::string& notation)
+{
+   notation;
+   assert(false && "todo");
+   return {};
+}
+
+
+///////////////////
+
 Record::Record(std::string pos)
    : m_initialPos{std::move(pos)}
 {

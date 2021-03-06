@@ -3,8 +3,10 @@
 // MIT license
 //
 #pragma once
+#include "piece.h"
 
 class Position;
 
 
-Position makeMove(const Position& pos);
+Position makeMove(const Position& pos, Color side);
+Position makeMove(const Position& pos, const Piece& piece);
