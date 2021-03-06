@@ -43,6 +43,7 @@ class Piece
 
    Piece() = default;
    Piece(Type type, Color color, Square loc);
+   explicit Piece(const std::string& notation);
 
    Square location() const { return m_loc; }
    Color color() const { return m_color; }

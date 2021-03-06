@@ -12,6 +12,7 @@
 
 struct Square
 {
+   Square() = default;
    Square(char f, char r) : file{f}, rank{r} {}
    Square(int f, int r) : file{static_cast<char>(f)}, rank{static_cast<char>(r)} {}
 

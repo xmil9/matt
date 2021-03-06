@@ -9,6 +9,8 @@
 #include <array>
 #include <cassert>
 #include <iterator>
+#include <stdexcept>
+#include <tuple>
 
 
 namespace
@@ -200,6 +202,12 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 
 
 ///////////////////
+
+Piece::Piece(const std::string& notation)
+{
+   std::tie(m_type, m_color, m_loc) = parsePieceNotation(notation);
+}
+
 
 std::string Piece::notation() const
 {

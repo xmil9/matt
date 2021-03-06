@@ -17,19 +17,20 @@ std::string noteCapture(const Piece& piece, Square to, const Position& pos);
 ///////////////////
 
 std::vector<Piece> parsePositionNotation(const std::string& notation);
+std::tuple<Piece::Type, Color, Square> parsePieceNotation(const std::string& notation);
 
 
 ///////////////////
 
 class Record
 {
-public:
+ public:
    Record() = default;
    explicit Record(std::string pos);
 
    void record(const std::string& move) { m_moves.push_back(move); }
 
-private:
+ private:
    std::string m_initialPos;
    std::vector<std::string> m_moves;
 };
