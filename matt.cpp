@@ -4,24 +4,34 @@
 //
 #include "matt.h"
 #include "position.h"
+#include <algorithm>
+#include <iterator>
 
 
-Position makeMove(const Position& pos, Color side)
+std::optional<Position> makeMove(const Position& pos, Color side)
 {
+   std::vector<Position> bestByPieces;
    const auto pieces = pos.pieces(side);
    for (const auto& piece : pieces)
-   {
-      const auto positions = piece.nextPositions(pos);
-   }
-   return pos;
+      if (const auto best = makeMove(pos, piece); best.has_value())
+         bestByPieces.push_back(*best);
+
+   const auto it = std::max_element(
+      begin(bestByPieces), end(bestByPieces),
+      [](const auto& a, const auto& b) { return a.score() < b.score(); });
+   if (it == end(bestByPieces))
+      return std::nullopt;
+   return *it;
 }
 
 
-Position makeMove(const Position& pos, const Piece& piece)
+std::optional<Position> makeMove(const Position& pos, const Piece& piece)
 {
-   // just depth one for now
    const auto positions = piece.nextPositions(pos);
-   // find best and return
-   assert(false && "todo");
-   return {};
+   const auto it = std::max_element(
+      begin(positions), end(positions),
+      [](const auto& a, const auto& b) { return a.score() < b.score(); });
+   if (it == end(positions))
+      return std::nullopt;
+   return *it;
 }

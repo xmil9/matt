@@ -16,6 +16,7 @@ class Position
    Position();
    explicit Position(const std::vector<Piece>& pieces);
 
+   float score() const { return m_score; } 
    bool isOccupied(Square loc) const;
    bool isOccupiedBy(Square loc, Color bySide) const;
    std::optional<Piece> operator[](Square loc) const;
@@ -29,12 +30,12 @@ class Position
 
    Iter at(Square loc);
    Citer at(Square loc) const;
-   double calcScore() const;
+   float calcScore() const;
 
  private:
    std::vector<Piece> m_pieces;
    Record m_record;
-   double m_score = 0.;
+   float m_score = 0.;
 };
 
 

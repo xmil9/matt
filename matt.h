@@ -8,5 +8,5 @@
 class Position;
 
 
-Position makeMove(const Position& pos, Color side);
-Position makeMove(const Position& pos, const Piece& piece);
+std::optional<Position> makeMove(const Position& pos, Color side);
+std::optional<Position> makeMove(const Position& pos, const Piece& piece);
