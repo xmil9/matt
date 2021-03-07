@@ -35,7 +35,7 @@ class Position
  private:
    std::vector<Piece> m_pieces;
    Record m_record;
-   float m_score = 0.;
+   float m_score = 0.f;
 };
 
 

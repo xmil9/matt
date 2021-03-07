@@ -4,6 +4,7 @@
 //
 #include "position.h"
 #include "move.h"
+#include "essentutils/rand_util.h"
 #include "essentutils/string_util.h"
 #include <algorithm>
 #include <iterator>
@@ -24,9 +25,8 @@ Position::Position()
 
 
 Position::Position(const std::vector<Piece>& pieces)
+   : m_pieces{pieces}, m_score{calcScore()}
 {
-   pieces;
-   assert(false && "todo");
 }
 
 
@@ -94,6 +94,13 @@ Position::Citer Position::at(Square loc) const
 {
    return std::find_if(begin(m_pieces), end(m_pieces),
                        [&loc](const Piece& piece) { return piece.location() == loc; });
+}
+
+
+float Position::calcScore() const
+{
+   esl::Random<float> rnd;
+   return rnd.next();
 }
 
 
