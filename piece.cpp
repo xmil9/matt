@@ -19,12 +19,7 @@ namespace
 
 inline Move makeMove(const Piece& piece, Square to, const Position& pos)
 {
-   return Move{piece, to, noteMove(piece, to, pos)};
-}
-
-Move makeCapture(const Piece& piece, Square to, const Position& pos)
-{
-   return Move{piece, to, noteCapture(piece, to, pos)};
+   return Move{piece, to, notateMove(piece, to, pos)};
 }
 
 
@@ -47,7 +42,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
       // - can move to it if occupied by other color (capture)
       // - further squares in this direction are not accessible
       if (occupant->color() != piece.color())
-         moves.push_back(makeCapture(piece, to, pos));
+         moves.push_back(makeMove(piece, to, pos));
    }
 
    return occupant.has_value();
@@ -163,35 +158,37 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 {
    assert(pos[pawn.location()] == pawn);
 
-   const Offset dir{0, pawn.color() == Color::White ? 1 : -1};
-
    std::vector<Move> moves;
+   const Offset dir = pawnDirection(pawn);
 
    // Move one square forward.
    if (const auto to = pawn.location() + dir; to.has_value())
       collectMoveTo(pawn, *to, pos, moves);
 
    // Move two squares forward from starting square.
-   const char startRank = pawn.color() == Color::White ? 2 : 7;
-   if (pawn.location().rank == startRank)
+   if (isPawnOnInitialRank(pawn))
       if (const auto to = pawn.location() + 2 * dir; to.has_value())
          collectMoveTo(pawn, *to, pos, moves);
 
-   // Capture diagonally to lower file.
+   // Capture diagonally on lower file.
    if (const auto to = pawn.location() + dir + Offset{-1, 0}; to.has_value())
    {
       if (const auto target = pos[*to];
           target.has_value() && pawn.color() != target->color())
       {
-         moves.push_back(makeCapture(pawn, *to, pos));
+         moves.push_back(makeMove(pawn, *to, pos));
       }
    }
 
-   // Capture diagonally to higher file.
+   // Capture diagonally on higher file.
    if (const auto to = pawn.location() + dir + Offset{1, 0}; to.has_value())
+   {
       if (const auto target = pos[*to];
           target.has_value() && pawn.color() != target->color())
-         moves.push_back(makeCapture(pawn, *to, pos));
+      {
+         moves.push_back(makeMove(pawn, *to, pos));
+      }
+   }
 
    // todo - capture en passant
 
@@ -203,53 +200,24 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 
 ///////////////////
 
-Piece::Piece(const std::string& notation)
-{
-   std::tie(m_type, m_color, m_loc) = parsePieceNotation(notation);
-}
-
-
-std::string Piece::notation() const
-{
-   switch (m_type)
-   {
-   case Type::King:
-      return "K";
-   case Type::Queen:
-      return "Q";
-   case Type::Rook:
-      return "R";
-   case Type::Bishop:
-      return "B";
-   case Type::Knight:
-      return "N";
-   case Type::Pawn:
-      return "";
-   default:
-      assert(false && "Huh, a new piece type?");
-      return "";
-   }
-}
-
-
 std::vector<Move> Piece::nextMoves(const Position& pos) const
 {
-   switch (m_type)
+   switch (m_figure)
    {
-   case Type::King:
+   case Figure::King:
       return kingMoves(*this, pos);
-   case Type::Queen:
+   case Figure::Queen:
       return queenMoves(*this, pos);
-   case Type::Rook:
+   case Figure::Rook:
       return rookMoves(*this, pos);
-   case Type::Bishop:
+   case Figure::Bishop:
       return bishopMoves(*this, pos);
-   case Type::Knight:
+   case Figure::Knight:
       return knightMoves(*this, pos);
-   case Type::Pawn:
+   case Figure::Pawn:
       return pawnMoves(*this, pos);
    default:
-      assert(false && "Huh, a new piece type?");
+      assert(false && "Invalid figure");
       return {};
    }
 }
@@ -261,10 +229,49 @@ std::vector<Position> Piece::nextPositions(const Position& pos) const
 
    std::vector<Position> result;
    std::transform(begin(moves), end(moves), std::back_inserter(result),
-                  [&pos](const auto& move) {
-                     Position next = pos;
-                     next.makeMove(move);
-                     return next;
-                  });
+                  [&pos](const auto& move) { return pos.makeMove(move); });
    return result;
+}
+
+
+Piece denotatePiece(std::string_view notation)
+{
+   const Figure figure = denotateFigure(notation);
+   std::size_t idx = figure == Figure::Pawn ? 0 : 1;
+   const Color color = denotateColor(notation.substr(idx++));
+   const Square loc = denotateSquare(notation.substr(idx));
+   return Piece{figure, color, loc};
+}
+
+
+Piece denotatePiece(std::string_view notation, Color side)
+{
+   const Figure figure = denotateFigure(notation);
+   std::size_t idx = figure == Figure::Pawn ? 0 : 1;
+   if (notation[idx] == 'x')
+      ++idx;
+   const Square loc = denotateSquare(notation.substr(idx));
+   return Piece{figure, side, loc};
+}
+
+
+///////////////////
+
+bool isPawnOnInitialRank(const Piece& pawn)
+{
+   assert(pawn.isFigure(Figure::Pawn));
+   if (!pawn.isFigure(Figure::Pawn))
+      return false;
+
+   const char initialRank = pawn.color() == Color::White ? 2 : 7;
+   return pawn.location().rank() == initialRank;
+}
+
+
+Offset pawnDirection(const Piece& pawn)
+{
+   assert(pawn.isFigure(Figure::Pawn));
+   if (!pawn.isFigure(Figure::Pawn))
+      return {0, 0};
+   return {0, pawn.color() == Color::White ? 1 : -1};
 }

@@ -19,7 +19,9 @@ Position makeMove(const Position& pos, Color side)
 
 Position makeMove(const Position& pos, const Piece& piece)
 {
+   // just depth one for now
    const auto positions = piece.nextPositions(pos);
+   // find best and return
    assert(false && "todo");
    return {};
 }

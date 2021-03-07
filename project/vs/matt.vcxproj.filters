@@ -4,14 +4,14 @@
     <ClCompile Include="..\..\matt.cpp" />
     <ClCompile Include="..\..\position.cpp" />
     <ClCompile Include="..\..\piece.cpp" />
-    <ClCompile Include="..\..\notation.cpp" />
+    <ClCompile Include="..\..\move.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\position.h" />
     <ClInclude Include="..\..\piece.h" />
     <ClInclude Include="..\..\square.h" />
-    <ClInclude Include="..\..\notation.h" />
     <ClInclude Include="..\..\move.h" />
     <ClInclude Include="..\..\matt.h" />
+    <ClInclude Include="..\..\record.h" />
   </ItemGroup>
 </Project>

@@ -4,8 +4,16 @@
 //
 #include "position.h"
 #include "move.h"
+#include "essentutils/string_util.h"
 #include <algorithm>
 #include <iterator>
+#include <sstream>
+
+
+///////////////////
+
+static constexpr char PieceDelimCh = ' ';
+static constexpr char PieceDelim[] = {PieceDelimCh};
 
 
 ///////////////////
@@ -18,13 +26,6 @@ Position::Position()
 Position::Position(const std::vector<Piece>& pieces)
 {
    pieces;
-   assert(false && "todo");
-}
-
-
-Position::Position(const std::string& notation)
-{
-   notation;
    assert(false && "todo");
 }
 
@@ -60,16 +61,25 @@ std::vector<Piece> Position::pieces(Color side) const
 }
 
 
-void Position::makeMove(const Move& move)
+std::string Position::notate() const
 {
-   const auto it = at(move.from());
-   if (it != end(m_pieces))
-   {
-      assert(*it == move.piece());
-      m_pieces.erase(it);
-      m_pieces.push_back(move.piece());
-      m_record.record(move.notation());
-   }
+   std::stringstream notation;
+   std::transform(begin(m_pieces), end(m_pieces),
+                  std::ostream_iterator<std::string>(notation, PieceDelim),
+                  [](const auto& piece) { return piece.notateWithColor(); });
+   return esl::trimRight(notation.str(), PieceDelimCh);
+}
+
+
+Position Position::makeMove(const Move& move) const
+{
+   Piece movingPiece = move.piece();
+
+   std::vector<Piece> nextPieces;
+   std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(nextPieces),
+                [&movingPiece](const Piece& elem) { return elem != movingPiece; });
+   nextPieces.push_back(move.movedPiece());
+   return Position{nextPieces};
 }
 
 
@@ -84,4 +94,20 @@ Position::Citer Position::at(Square loc) const
 {
    return std::find_if(begin(m_pieces), end(m_pieces),
                        [&loc](const Piece& piece) { return piece.location() == loc; });
+}
+
+
+///////////////////
+
+Position denotatePosition(std::string_view notation)
+{
+   const std::vector<std::string> pieceNotations =
+      esl::split(std::string{notation}, PieceDelim);
+
+   std::vector<Piece> pieces;
+   std::transform(
+      begin(pieceNotations), end(pieceNotations), std::back_inserter(pieces),
+      [](const std::string& pieceNotation) { return denotatePiece(pieceNotation); });
+
+   return Position{pieces};
 }

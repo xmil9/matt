@@ -20,14 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\matt.cpp" />
-    <ClCompile Include="..\..\notation.cpp" />
+    <ClCompile Include="..\..\move.cpp" />
     <ClCompile Include="..\..\piece.cpp" />
     <ClCompile Include="..\..\position.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\matt.h" />
     <ClInclude Include="..\..\move.h" />
-    <ClInclude Include="..\..\notation.h" />
+    <ClInclude Include="..\..\record.h" />
     <ClInclude Include="..\..\piece.h" />
     <ClInclude Include="..\..\position.h" />
     <ClInclude Include="..\..\square.h" />

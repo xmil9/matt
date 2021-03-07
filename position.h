@@ -3,8 +3,8 @@
 // MIT license
 //
 #pragma once
-#include "notation.h"
 #include "piece.h"
+#include "record.h"
 #include <vector>
 
 
@@ -15,13 +15,13 @@ class Position
  public:
    Position();
    explicit Position(const std::vector<Piece>& pieces);
-   explicit Position(const std::string& notation);
 
    bool isOccupied(Square loc) const;
    bool isOccupiedBy(Square loc, Color bySide) const;
    std::optional<Piece> operator[](Square loc) const;
    std::vector<Piece> pieces(Color side) const;
-   void makeMove(const Move& move);
+   std::string notate() const;
+   Position makeMove(const Move& move) const;
 
  private:
    using Iter = std::vector<Piece>::iterator;
@@ -36,3 +36,8 @@ class Position
    Record m_record;
    double m_score = 0.;
 };
+
+
+///////////////////
+
+Position denotatePosition(std::string_view notation);
