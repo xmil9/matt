@@ -5,6 +5,7 @@
 #pragma once
 #include <cassert>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -24,8 +25,8 @@ class Square
 
    operator bool() const;
    bool operator!() const { return !operator bool(); }
-   
-   friend void swap(Square& a, Square& b)
+
+   friend void swap(Square& a, Square& b) noexcept
    {
       using std::swap;
       swap(a.m_file, b.m_file);
@@ -33,17 +34,17 @@ class Square
    }
 
  private:
-   char m_file = 'a';
-   char m_rank = '1';
+   char m_file = 0;
+   char m_rank = 0;
 };
 
 
-inline Square::Square(char f, char r) : m_file{f}, m_rank{r}
+inline Square::Square(char f, char r)
+: m_file{(f >= '1' && f <= '8') ? f : 0}, m_rank{(m_rank >= 'a' && m_rank <= 'h') ? r : 0}
 {
 }
 
-inline Square::Square(int f, int r)
-: m_file{static_cast<char>(f)}, m_rank{static_cast<char>(r)}
+inline Square::Square(int f, int r) : Square{static_cast<char>(f), static_cast<char>(r)}
 {
 }
 
@@ -57,14 +58,12 @@ inline Square denotateSquare(std::string_view notation)
    assert(notation.size() == 2);
    if (notation.size() < 2)
       return Square{};
-   const Square s{notation[0], notation[1]};
-   assert(!!s);
-   return s;
+   return Square{notation[0], notation[1]};
 }
 
 inline Square::operator bool() const
 {
-   return m_file >= '1' && m_file <= '8' && m_rank >= 'a' && m_rank <= 'h';
+   return m_file != 0 && m_rank != 0;
 }
 
 inline bool operator==(Square a, Square b)
@@ -73,18 +72,17 @@ inline bool operator==(Square a, Square b)
 }
 
 
-
 ///////////////////
 
 class Offset
 {
-public:
+ public:
    Offset() = default;
    Offset(int df, int dr);
 
    int df() const { return m_df; }
    int dr() const { return m_dr; }
-   
+
    friend void swap(Offset& a, Offset& b)
    {
       using std::swap;
@@ -92,10 +90,10 @@ public:
       swap(a.m_dr, b.m_dr);
    }
 
-private:
+ private:
    static bool isValidOffset(int offset) { return -7 <= offset && offset <= 7; }
 
-private:
+ private:
    int m_df = 0;
    int m_dr = 0;
 };
