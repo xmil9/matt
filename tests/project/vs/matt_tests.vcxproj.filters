@@ -3,8 +3,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\matt_tests.cpp" />
     <ClCompile Include="..\..\test_util.cpp" />
+    <ClCompile Include="..\..\square_tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test_util.h" />
+    <ClInclude Include="..\..\square_tests.h" />
   </ItemGroup>
 </Project>

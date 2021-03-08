@@ -23,7 +23,6 @@ class Square
    std::string notate() const;
 
    operator bool() const;
-   bool operator!() const { return !operator bool(); }
 
    friend void swap(Square& a, Square& b) noexcept
    {
@@ -38,9 +37,15 @@ class Square
 };
 
 
-inline Square::Square(char f, char r)
-: m_file{(f >= '1' && f <= '8') ? f : 0}, m_rank{(m_rank >= 'a' && m_rank <= 'h') ? r : 0}
+inline Square::Square(char f, char r) : m_file{f}, m_rank{r}
 {
+   const bool isValidFile = m_file >= 'a' && m_file <= 'h';
+   const bool isValidRank = m_rank >= '1' && m_rank <= '8';
+   if (!isValidFile || !isValidRank)
+   {
+      m_file = 0;
+      m_rank = 0;
+   }
 }
 
 inline Square::Square(int f, int r) : Square{static_cast<char>(f), static_cast<char>(r)}
@@ -49,15 +54,9 @@ inline Square::Square(int f, int r) : Square{static_cast<char>(f), static_cast<c
 
 inline std::string Square::notate() const
 {
-   return std::string{m_file} + std::string{m_rank};
-}
-
-inline Square denotateSquare(std::string_view notation)
-{
-   assert(notation.size() == 2);
-   if (notation.size() < 2)
-      return Square{};
-   return Square{notation[0], notation[1]};
+   if (operator bool())
+      return std::string{m_file} + std::string{m_rank};
+   return "";
 }
 
 inline Square::operator bool() const
@@ -65,9 +64,21 @@ inline Square::operator bool() const
    return m_file != 0 && m_rank != 0;
 }
 
+inline Square denotateSquare(std::string_view notation)
+{
+   if (notation.size() < 2)
+      return Square{};
+   return Square{notation[0], notation[1]};
+}
+
 inline bool operator==(Square a, Square b)
 {
    return a.file() == b.file() && a.rank() == b.rank();
+}
+
+inline bool operator!=(Square a, Square b)
+{
+   return !(a == b);
 }
 
 
