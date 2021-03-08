@@ -5,7 +5,6 @@
 #pragma once
 #include <cassert>
 #include <optional>
-#include <stdexcept>
 #include <string>
 #include <utility>
 
