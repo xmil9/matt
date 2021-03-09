@@ -93,15 +93,12 @@ class Offset
    int df() const { return m_df; }
    int dr() const { return m_dr; }
 
-   friend void swap(Offset& a, Offset& b)
+   friend void swap(Offset& a, Offset& b) noexcept
    {
       using std::swap;
       swap(a.m_df, b.m_df);
       swap(a.m_dr, b.m_dr);
    }
-
- private:
-   static bool isValidOffset(int offset) { return -7 <= offset && offset <= 7; }
 
  private:
    int m_df = 0;
@@ -111,12 +108,16 @@ class Offset
 
 inline Offset::Offset(int df, int dr) : m_df{df}, m_dr{dr}
 {
-   assert(isValidOffset(df) && isValidOffset(dr));
 }
 
 inline bool operator==(Offset a, Offset b)
 {
    return a.df() == b.df() && a.dr() == b.dr();
+}
+
+inline bool operator!=(Offset a, Offset b)
+{
+   return !(a == b);
 }
 
 inline Offset operator*(Offset off, int v)

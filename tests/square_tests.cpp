@@ -212,7 +212,8 @@ void testDenotateSquare()
       VERIFY(denotateSquare("a8") == Square('a', '8'), caseLabel);
    }
    {
-      const std::string caseLabel = "denotateSquare for strings starting with valid notations";
+      const std::string caseLabel =
+         "denotateSquare for strings starting with valid notations";
 
       VERIFY(denotateSquare("a1dbskuu") == Square('a', '1'), caseLabel);
       VERIFY(denotateSquare("h873kHH") == Square('h', '8'), caseLabel);
@@ -286,6 +287,108 @@ void testSquareInequality()
    }
 }
 
+
+void testOffsetDefaultCtor()
+{
+   {
+      const std::string caseLabel = "Offset default ctor";
+
+      const Offset off;
+      VERIFY(off.df() == 0, caseLabel);
+      VERIFY(off.dr() == 0, caseLabel);
+   }
+}
+
+
+void testOffsetIntegerCtor()
+{
+   {
+      const std::string caseLabel = "Offset ctor for integers";
+
+      VERIFY(Offset(0, 0).df() == 0 && Offset(0, 0).dr() == 0, caseLabel);
+      VERIFY(Offset(1, 1).df() == 1 && Offset(1, 1).dr() == 1, caseLabel);
+      VERIFY(Offset(-1, -1).df() == -1 && Offset(-1, -1).dr() == -1, caseLabel);
+      VERIFY(Offset(-5, 5).df() == -5 && Offset(-5, 5).dr() == 5, caseLabel);
+   }
+}
+
+
+void testSwapOffsets()
+{
+   {
+      const std::string caseLabel = "swap() for Offset objects";
+
+      Offset a{1, 2};
+      Offset b{3, 4};
+      swap(a, b);
+      VERIFY(a.df() == 3 && a.dr() == 4, caseLabel);
+      VERIFY(b.df() == 1 && b.dr() == 2, caseLabel);
+   }
+}
+
+
+void testOffsetEquality()
+{
+   {
+      const std::string caseLabel = "Offset equality for equal offsets";
+
+      VERIFY(Offset(1, 2) == Offset(1, 2), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Offset equality for unequal offsets";
+
+      VERIFY(!(Offset(1, 2) == Offset(2, 2)), caseLabel);
+      VERIFY(!(Offset(1, 2) == Offset(1, 1)), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Offset equality for default offset";
+
+      VERIFY(Offset() == Offset(), caseLabel);
+      VERIFY(!(Offset() == Offset(1, 2)), caseLabel);
+   }
+}
+
+
+void testOffsetInequality()
+{
+   {
+      const std::string caseLabel = "Offset inequality for equal offsets";
+
+      VERIFY(!(Offset(1, 2) != Offset(1, 2)), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Offset inequality for unequal offsets";
+
+      VERIFY(Offset(1, 2) != Offset(2, 2), caseLabel);
+      VERIFY(Offset(1, 2) != Offset(1, 1), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Offset inequality for default offset";
+
+      VERIFY(!(Offset() != Offset()), caseLabel);
+      VERIFY(Offset() != Offset(1, 2), caseLabel);
+   }
+}
+
+
+void testOffsetMultiplicationWithScalar()
+{
+   {
+      const std::string caseLabel = "Offset multiplication with scalar as first operand";
+
+      VERIFY(2 * Offset(1, 2) == Offset(2, 4), caseLabel);
+      VERIFY(-1 * Offset(1, 2) == Offset(-1, -2), caseLabel);
+      VERIFY(0 * Offset(1, 2) == Offset(), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Offset multiplication with scalar as second operand";
+
+      VERIFY(Offset(1, 2) * 2 == Offset(2, 4), caseLabel);
+      VERIFY(Offset(1, 2) * -1 == Offset(-1, -2), caseLabel);
+      VERIFY(Offset(1, 2) * 0== Offset(), caseLabel);
+   }
+}
+
 } // namespace
 
 
@@ -304,4 +407,11 @@ void testSquare()
    testDenotateSquare();
    testSquareEquality();
    testSquareInequality();
+
+   testOffsetDefaultCtor();
+   testOffsetIntegerCtor();
+   testSwapOffsets();
+   testOffsetEquality();
+   testOffsetInequality();
+   testOffsetMultiplicationWithScalar();
 }
