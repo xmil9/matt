@@ -385,7 +385,108 @@ void testOffsetMultiplicationWithScalar()
 
       VERIFY(Offset(1, 2) * 2 == Offset(2, 4), caseLabel);
       VERIFY(Offset(1, 2) * -1 == Offset(-1, -2), caseLabel);
-      VERIFY(Offset(1, 2) * 0== Offset(), caseLabel);
+      VERIFY(Offset(1, 2) * 0 == Offset(), caseLabel);
+   }
+}
+
+
+void testSquareOffsetAddition()
+{
+   {
+      const std::string caseLabel =
+         "Square and offset addition with square as first operand";
+
+      VERIFY(Square('b', '2') + Offset(1, 1) == std::make_optional<Square>('c', '3'),
+             caseLabel);
+      VERIFY(Square('b', '2') + Offset(4, 5) == std::make_optional<Square>('f', '7'),
+             caseLabel);
+      VERIFY(Square('g', '6') + Offset(1, 2) == std::make_optional<Square>('h', '8'),
+             caseLabel);
+      VERIFY(Square('g', '6') + Offset(-1, -2) == std::make_optional<Square>('f', '4'),
+             caseLabel);
+      VERIFY(Square('g', '6') + Offset(3, 1) == std::nullopt, caseLabel);
+      VERIFY(Square('g', '6') + Offset(1, 5) == std::nullopt, caseLabel);
+      VERIFY(Square('d', '6') + Offset(-5, -1) == std::nullopt, caseLabel);
+      VERIFY(Square('d', '3') + Offset(-1, -4) == std::nullopt, caseLabel);
+      VERIFY(Square('d', '3') + Offset(0, 0) == std::make_optional<Square>('d', '3'),
+             caseLabel);
+   }
+}
+
+
+void testOffsetSquareAddition()
+{
+   {
+      const std::string caseLabel =
+         "Square and offset addition with square as second operand";
+
+      VERIFY(Offset(1, 1) + Square('b', '2') == std::make_optional<Square>('c', '3'),
+             caseLabel);
+      VERIFY(Offset(4, 5) + Square('b', '2') == std::make_optional<Square>('f', '7'),
+             caseLabel);
+      VERIFY(Offset(1, 2) + Square('g', '6') == std::make_optional<Square>('h', '8'),
+             caseLabel);
+      VERIFY(Offset(-1, -2) + Square('g', '6') == std::make_optional<Square>('f', '4'),
+             caseLabel);
+      VERIFY(Offset(3, 1) + Square('g', '6') == std::nullopt, caseLabel);
+      VERIFY(Offset(1, 5) + Square('g', '6') == std::nullopt, caseLabel);
+      VERIFY(Offset(-5, -1) + Square('d', '6') == std::nullopt, caseLabel);
+      VERIFY(Offset(-1, -4) + Square('d', '3') == std::nullopt, caseLabel);
+      VERIFY(Offset(0, 0) + Square('d', '3') == std::make_optional<Square>('d', '3'),
+             caseLabel);
+   }
+}
+
+
+void testOptionalSquareOffsetAddition()
+{
+   {
+      const std::string caseLabel =
+         "std::optional<Square> and offset addition with square as first operand";
+
+      VERIFY(std::make_optional<Square>('b', '2') + Offset(1, 1) ==
+                std::make_optional<Square>('c', '3'),
+             caseLabel);
+      VERIFY(std::make_optional<Square>('b', '2') + Offset(4, 5) ==
+                std::make_optional<Square>('f', '7'),
+             caseLabel);
+      VERIFY(std::make_optional<Square>('g', '6') + Offset(1, 2) ==
+                std::make_optional<Square>('h', '8'),
+             caseLabel);
+      VERIFY(std::make_optional<Square>('g', '6') + Offset(-1, -2) ==
+                std::make_optional<Square>('f', '4'),
+             caseLabel);
+      VERIFY(std::make_optional<Square>('g', '6') + Offset(3, 1) == std::nullopt,
+             caseLabel);
+      VERIFY(std::make_optional<Square>('g', '6') + Offset(1, 5) == std::nullopt,
+             caseLabel);
+      VERIFY(std::make_optional<Square>('d', '6') + Offset(-5, -1) == std::nullopt,
+             caseLabel);
+      VERIFY(std::make_optional<Square>('d', '3') + Offset(-1, -4) == std::nullopt,
+             caseLabel);
+      VERIFY(std::nullopt + Offset(1, 4) == std::nullopt, caseLabel);
+      VERIFY(std::make_optional<Square>('d', '3') + Offset(0, 0) ==
+                std::make_optional<Square>('d', '3'),
+             caseLabel);
+   }
+}
+
+
+void testOffsetOptionalSquareAddition()
+{
+   {
+      const std::string caseLabel =
+         "std::optional<Square> and offset addition with square as second operand";
+
+      VERIFY(Offset(4, 5) + std::make_optional<Square>('b', '2') ==
+                std::make_optional<Square>('f', '7'),
+             caseLabel);
+      VERIFY(Offset(3, 1) + std::make_optional<Square>('g', '6') == std::nullopt,
+             caseLabel);
+      VERIFY(Offset(1, 4) + std::nullopt == std::nullopt, caseLabel);
+      VERIFY(Offset(0, 0) + std::make_optional<Square>('d', '3') ==
+                std::make_optional<Square>('d', '3'),
+             caseLabel);
    }
 }
 
@@ -414,4 +515,9 @@ void testSquare()
    testOffsetEquality();
    testOffsetInequality();
    testOffsetMultiplicationWithScalar();
+
+   testSquareOffsetAddition();
+   testOffsetSquareAddition();
+   testOptionalSquareOffsetAddition();
+   testOffsetOptionalSquareAddition();
 }
