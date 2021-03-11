@@ -29,6 +29,11 @@
     <ClInclude Include="..\..\square_tests.h" />
     <ClInclude Include="..\..\test_util.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\project\vs\Matt.vcxproj">
+      <Project>{9e87b945-3102-4e83-9894-8d1cf7caab78}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

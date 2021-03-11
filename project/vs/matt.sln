@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "essentutils", "..\..\deps\essentutils\project\vs\essentutils.vcxproj", "{1C70FF5C-CDC9-426E-9C6A-922919183BAB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "matt_tests", "..\..\tests\project\vs\matt_tests.vcxproj", "{0C8397E2-B1FC-4903-A522-7B9145B9DF3F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E87B945-3102-4E83-9894-8D1CF7CAAB78} = {9E87B945-3102-4E83-9894-8D1CF7CAAB78}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
