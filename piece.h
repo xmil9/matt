@@ -5,6 +5,7 @@
 #pragma once
 #include "square.h"
 #include <optional>
+#include <string>
 #include <vector>
 
 class Move;
@@ -125,6 +126,7 @@ class Piece
  public:
    Piece() = default;
    Piece(Figure figure, Color color, Square loc);
+   Piece(Figure figure, Color color, std::string_view loc);
 
    Color color() const { return m_color; }
    Square location() const { return m_loc; }
@@ -137,7 +139,7 @@ class Piece
 
    bool operator==(const Piece& other) const;
 
-   friend void swap(Piece& a, Piece& b)
+   friend void swap(Piece& a, Piece& b) noexcept
    {
       using std::swap;
       swap(a.m_figure, b.m_figure);

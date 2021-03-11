@@ -200,6 +200,12 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 
 ///////////////////
 
+Piece::Piece(Figure figure, Color color, std::string_view loc)
+   : Piece{figure, color, denotateSquare(loc)}
+{
+}
+
+
 std::vector<Move> Piece::nextMoves(const Position& pos) const
 {
    switch (m_figure)
