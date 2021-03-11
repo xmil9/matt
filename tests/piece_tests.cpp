@@ -110,6 +110,82 @@ void testDenotateFigure()
    }
 }
 
+
+void testPieceDefaultCtor()
+{
+   {
+      const std::string caseLabel = "Piece default ctor";
+
+      const Piece p;
+      VERIFY(p.isFigure(Figure::Pawn), caseLabel);
+      VERIFY(p.color() == Color::White, caseLabel);
+      VERIFY(p.location() == Square(), caseLabel);
+   }
+}
+
+
+void testPieceCtor()
+{
+   {
+      const std::string caseLabel = "Piece ctor";
+
+      const Piece p{Figure::King, Color::Black, Square{'c', '5'}};
+      VERIFY(p.isFigure(Figure::King), caseLabel);
+      VERIFY(p.color() == Color::Black, caseLabel);
+      VERIFY(p.location() == Square('c', '5'), caseLabel);
+   }
+}
+
+
+void testPieceCtorWithLocationString()
+{
+   {
+      const std::string caseLabel = "Piece ctor with location string";
+
+      const Piece p{Figure::King, Color::Black, "c5"};
+      VERIFY(p.isFigure(Figure::King), caseLabel);
+      VERIFY(p.color() == Color::Black, caseLabel);
+      VERIFY(p.location() == Square('c', '5'), caseLabel);
+   }
+}
+
+
+void testPieceColor()
+{
+   {
+      const std::string caseLabel = "Piece::color";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").color() == Color::Black, caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "a1").color() == Color::White, caseLabel);
+   }
+}
+
+
+void testPieceLocation()
+{
+   {
+      const std::string caseLabel = "Piece::location";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").location() == Square('f', '4'),
+             caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "a1").location() == Square('a', '1'),
+             caseLabel);
+   }
+}
+
+
+void testPieceIsFigure()
+{
+   {
+      const std::string caseLabel = "Piece::isFigure";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").isFigure(Figure::King), caseLabel);
+      VERIFY(!Piece(Figure::King, Color::Black, "f4").isFigure(Figure::Queen), caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "h1").isFigure(Figure::Pawn), caseLabel);
+      VERIFY(!Piece(Figure::Pawn, Color::White, "b7").isFigure(Figure::Rook), caseLabel);
+   }
+}
+
 } // namespace
 
 
@@ -123,4 +199,11 @@ void testPiece()
 
    testNotateFigure();
    testDenotateFigure();
+
+   testPieceDefaultCtor();
+   testPieceCtor();
+   testPieceCtorWithLocationString();
+   testPieceColor();
+   testPieceLocation();
+   testPieceIsFigure();
 }
