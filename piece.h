@@ -33,8 +33,7 @@ inline std::string notateColor(Color c)
    case Color::Black:
       return "b";
    default:
-      assert("Invalid color.");
-      return "<invalid>";
+      return "";
    }
 }
 
@@ -42,13 +41,13 @@ inline Color denotateColor(char notation)
 {
    switch (notation)
    {
-      case 'w':
-         return Color::White;
-      case 'b':
-         return Color::Black;
+   case 'w':
+      return Color::White;
+   case 'b':
+      return Color::Black;
+   default:
+      return Color::White;
    }
-   assert("Invalid color notation.");
-   return Color::White;
 }
 
 inline Color denotateColor(std::string_view notation)
@@ -88,8 +87,7 @@ inline std::string notateFigure(Figure f)
    case Figure::Pawn:
       return "";
    default:
-      assert(false && "Invalid figure.");
-      return "<invalid>";
+      return "";
    }
 }
 
