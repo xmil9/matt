@@ -186,6 +186,36 @@ void testPieceIsFigure()
    }
 }
 
+
+void testPieceNotate()
+{
+   {
+      const std::string caseLabel = "Piece::notate";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").notate() == "Kf4", caseLabel);
+      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notate() == "Qa2", caseLabel);
+      VERIFY(Piece(Figure::Rook, Color::White, "h8").notate() == "Rh8", caseLabel);
+      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notate() == "Bc6", caseLabel);
+      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notate() == "Nb8", caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notate() == "b7", caseLabel);
+   }
+}
+
+
+void testPieceNotateWithColor()
+{
+   {
+      const std::string caseLabel = "Piece::notateWithColor";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").notateWithColor() == "Kbf4", caseLabel);
+      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notateWithColor() == "Qba2", caseLabel);
+      VERIFY(Piece(Figure::Rook, Color::White, "h8").notateWithColor() == "Rwh8", caseLabel);
+      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notateWithColor() == "Bwc6", caseLabel);
+      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notateWithColor() == "Nbb8", caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notateWithColor() == "wb7", caseLabel);
+   }
+}
+
 } // namespace
 
 
@@ -206,4 +236,6 @@ void testPiece()
    testPieceColor();
    testPieceLocation();
    testPieceIsFigure();
+   testPieceNotate();
+   testPieceNotateWithColor();
 }
