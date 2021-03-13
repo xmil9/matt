@@ -75,6 +75,33 @@ void testSquareIntegerCtor()
 }
 
 
+void testSquareStringCtor()
+{
+   {
+      const std::string caseLabel = "Square ctor for string";
+
+      VERIFY(Square("a1").file() == 'a', caseLabel);
+      VERIFY(Square("a1").rank() == '1', caseLabel);
+      VERIFY(Square("h8").file() == 'h', caseLabel);
+      VERIFY(Square("h8").rank() == '8', caseLabel);
+   }
+   {
+      const std::string caseLabel = "Square ctor for invalid string";
+
+      VERIFY(Square("z1").file() == 0, caseLabel);
+      VERIFY(Square("z1").rank() == 0, caseLabel);
+      VERIFY(Square("h9").file() == 0, caseLabel);
+      VERIFY(Square("h9").rank() == 0, caseLabel);
+   }
+   {
+      const std::string caseLabel = "Square ctor for longer string";
+
+      VERIFY(Square("c5345").file() == 'c', caseLabel);
+      VERIFY(Square("c5345").rank() == '5', caseLabel);
+   }
+}
+
+
 void testSquareFile()
 {
    {
@@ -500,6 +527,7 @@ void testSquare()
    testSquareDefaultCtor();
    testSquareCharCtor();
    testSquareIntegerCtor();
+   testSquareStringCtor();
    testSquareFile();
    testSquareRank();
    testSquareNotate();
