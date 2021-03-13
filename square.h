@@ -17,6 +17,7 @@ class Square
    Square() = default;
    Square(char f, char r);
    Square(int f, int r);
+   explicit Square(std::string_view notation);
 
    char file() const { return m_file; }
    char rank() const { return m_rank; }
@@ -36,7 +37,6 @@ class Square
    char m_rank = 0;
 };
 
-
 inline Square::Square(char f, char r) : m_file{f}, m_rank{r}
 {
    const bool isValidFile = m_file >= 'a' && m_file <= 'h';
@@ -52,6 +52,11 @@ inline Square::Square(int f, int r) : Square{static_cast<char>(f), static_cast<c
 {
 }
 
+inline Square::Square(std::string_view notation)
+   : Square{notation[0], notation[1]}
+{
+}
+
 inline std::string Square::notate() const
 {
    if (operator bool())
@@ -64,13 +69,6 @@ inline Square::operator bool() const
    return m_file != 0 && m_rank != 0;
 }
 
-inline Square denotateSquare(std::string_view notation)
-{
-   if (notation.size() < 2)
-      return Square{};
-   return Square{notation[0], notation[1]};
-}
-
 inline bool operator==(Square a, Square b)
 {
    return a.file() == b.file() && a.rank() == b.rank();
@@ -79,6 +77,16 @@ inline bool operator==(Square a, Square b)
 inline bool operator!=(Square a, Square b)
 {
    return !(a == b);
+}
+
+
+///////////////////
+
+inline Square denotateSquare(std::string_view notation)
+{
+   if (notation.size() < 2)
+      return Square{};
+   return Square{notation[0], notation[1]};
 }
 
 
