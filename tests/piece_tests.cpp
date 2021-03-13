@@ -39,30 +39,30 @@ void testNotateColor()
 }
 
 
-void testDenotateColor()
+void testMakeColor()
 {
    {
-      const std::string caseLabel = "denotateColor from char";
+      const std::string caseLabel = "makeColor from char";
 
-      VERIFY(denotateColor('w') == Color::White, caseLabel);
-      VERIFY(denotateColor('b') == Color::Black, caseLabel);
+      VERIFY(makeColor('w') == Color::White, caseLabel);
+      VERIFY(makeColor('b') == Color::Black, caseLabel);
       // Invalid chars.
-      VERIFY(denotateColor('a') == Color::White, caseLabel);
-      VERIFY(denotateColor(' ') == Color::White, caseLabel);
+      VERIFY(makeColor('a') == Color::White, caseLabel);
+      VERIFY(makeColor(' ') == Color::White, caseLabel);
    }
    {
-      const std::string caseLabel = "denotateColor from string";
+      const std::string caseLabel = "makeColor from string";
 
-      VERIFY(denotateColor("w") == Color::White, caseLabel);
-      VERIFY(denotateColor("b") == Color::Black, caseLabel);
+      VERIFY(makeColor("w") == Color::White, caseLabel);
+      VERIFY(makeColor("b") == Color::Black, caseLabel);
       // At beginning.
-      VERIFY(denotateColor("we5") == Color::White, caseLabel);
-      VERIFY(denotateColor("bg8") == Color::Black, caseLabel);
+      VERIFY(makeColor("we5") == Color::White, caseLabel);
+      VERIFY(makeColor("bg8") == Color::Black, caseLabel);
       // Invalid strings.
-      VERIFY(denotateColor(" ") == Color::White, caseLabel);
-      VERIFY(denotateColor("aaaa") == Color::White, caseLabel);
+      VERIFY(makeColor(" ") == Color::White, caseLabel);
+      VERIFY(makeColor("aaaa") == Color::White, caseLabel);
       // Empty string.
-      VERIFY(denotateColor("") == Color::White, caseLabel);
+      VERIFY(makeColor("") == Color::White, caseLabel);
    }
 }
 
@@ -82,37 +82,37 @@ void testNotateFigure()
 }
 
 
-void testDenotateFigure()
+void testMakeFigure()
 {
    {
-      const std::string caseLabel = "denotateFigure from char";
+      const std::string caseLabel = "makeFigure from char";
 
-      VERIFY(denotateFigure('K') == Figure::King, caseLabel);
-      VERIFY(denotateFigure('Q') == Figure::Queen, caseLabel);
-      VERIFY(denotateFigure('R') == Figure::Rook, caseLabel);
-      VERIFY(denotateFigure('B') == Figure::Bishop, caseLabel);
-      VERIFY(denotateFigure('N') == Figure::Knight, caseLabel);
+      VERIFY(makeFigure('K') == Figure::King, caseLabel);
+      VERIFY(makeFigure('Q') == Figure::Queen, caseLabel);
+      VERIFY(makeFigure('R') == Figure::Rook, caseLabel);
+      VERIFY(makeFigure('B') == Figure::Bishop, caseLabel);
+      VERIFY(makeFigure('N') == Figure::Knight, caseLabel);
       // Invalid chars.
-      VERIFY(denotateFigure('a') == Figure::Pawn, caseLabel);
-      VERIFY(denotateFigure(' ') == Figure::Pawn, caseLabel);
+      VERIFY(makeFigure('a') == Figure::Pawn, caseLabel);
+      VERIFY(makeFigure(' ') == Figure::Pawn, caseLabel);
    }
    {
-      const std::string caseLabel = "denotateFigure from string";
+      const std::string caseLabel = "makeFigure from string";
 
-      VERIFY(denotateFigure("K") == Figure::King, caseLabel);
-      VERIFY(denotateFigure("Q") == Figure::Queen, caseLabel);
-      VERIFY(denotateFigure("R") == Figure::Rook, caseLabel);
-      VERIFY(denotateFigure("B") == Figure::Bishop, caseLabel);
-      VERIFY(denotateFigure("N") == Figure::Knight, caseLabel);
-      VERIFY(denotateFigure("") == Figure::Pawn, caseLabel);
+      VERIFY(makeFigure("K") == Figure::King, caseLabel);
+      VERIFY(makeFigure("Q") == Figure::Queen, caseLabel);
+      VERIFY(makeFigure("R") == Figure::Rook, caseLabel);
+      VERIFY(makeFigure("B") == Figure::Bishop, caseLabel);
+      VERIFY(makeFigure("N") == Figure::Knight, caseLabel);
+      VERIFY(makeFigure("") == Figure::Pawn, caseLabel);
       // At beginning.
-      VERIFY(denotateFigure("Kwe5") == Figure::King, caseLabel);
-      VERIFY(denotateFigure("Rbg8") == Figure::Rook, caseLabel);
+      VERIFY(makeFigure("Kwe5") == Figure::King, caseLabel);
+      VERIFY(makeFigure("Rbg8") == Figure::Rook, caseLabel);
       // Invalid strings.
-      VERIFY(denotateFigure(" ") == Figure::Pawn, caseLabel);
-      VERIFY(denotateFigure("aaaa") == Figure::Pawn, caseLabel);
+      VERIFY(makeFigure(" ") == Figure::Pawn, caseLabel);
+      VERIFY(makeFigure("aaaa") == Figure::Pawn, caseLabel);
       // Empty string.
-      VERIFY(denotateFigure("") == Figure::Pawn, caseLabel);
+      VERIFY(makeFigure("") == Figure::Pawn, caseLabel);
    }
 }
 
@@ -314,7 +314,7 @@ void testPieceNextMovesForKing()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = denotatePiece(test.piece);
+         Piece piece = makePiece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -338,11 +338,11 @@ void testPieceNextMovesForKing()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = denotatePiece(test.piece);
+         Piece piece = makePiece(test.piece);
          std::vector<Piece> all{piece};
-         std::transform(
-            begin(test.otherPieces), end(test.otherPieces), std::back_inserter(all),
-            [](const std::string& notation) { return denotatePiece(notation); });
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -367,11 +367,11 @@ void testPieceNextMovesForKing()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = denotatePiece(test.piece);
+         Piece piece = makePiece(test.piece);
          std::vector<Piece> all{piece};
-         std::transform(
-            begin(test.otherPieces), end(test.otherPieces), std::back_inserter(all),
-            [](const std::string& notation) { return denotatePiece(notation); });
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -488,54 +488,49 @@ void testSwapPieces()
 }
 
 
-void testDenotatePieceWithColor()
+void testMakePieceWithColor()
 {
    {
-      const std::string caseLabel = "denotatePiece with color in notation";
+      const std::string caseLabel = "makePiece with color in notation";
 
-      VERIFY(denotatePiece("Bbg4") == Piece(Figure::Bishop, Color::Black, "g4"),
-             caseLabel);
-      VERIFY(denotatePiece("Kwh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
-      VERIFY(denotatePiece("wh8") == Piece(Figure::Pawn, Color::White, "h8"), caseLabel);
-      VERIFY(denotatePiece("bc4") == Piece(Figure::Pawn, Color::Black, "c4"), caseLabel);
+      VERIFY(makePiece("Bbg4") == Piece(Figure::Bishop, Color::Black, "g4"), caseLabel);
+      VERIFY(makePiece("Kwh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
+      VERIFY(makePiece("wh8") == Piece(Figure::Pawn, Color::White, "h8"), caseLabel);
+      VERIFY(makePiece("bc4") == Piece(Figure::Pawn, Color::Black, "c4"), caseLabel);
    }
    {
       const std::string caseLabel =
-         "denotatePiece with color in notation for invalid notation";
+         "makePiece with color in notation for invalid notation";
 
-      VERIFY(denotatePiece("Tbg4") == Piece(Figure::Pawn, Color::White, Square()),
-             caseLabel);
-      VERIFY(denotatePiece("Kqh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
-      VERIFY(denotatePiece("Rwr0") == Piece(Figure::Rook, Color::White, Square()),
-             caseLabel);
+      VERIFY(makePiece("Tbg4") == Piece(Figure::Pawn, Color::White, Square()), caseLabel);
+      VERIFY(makePiece("Kqh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
+      VERIFY(makePiece("Rwr0") == Piece(Figure::Rook, Color::White, Square()), caseLabel);
    }
 }
 
 
-void testDenotatePieceWithoutColor()
+void testMakePieceWithoutColor()
 {
    {
-      const std::string caseLabel = "denotatePiece without color in notation";
+      const std::string caseLabel = "makePiece without color in notation";
 
-      VERIFY(denotatePiece("Bg4", Color::Black) ==
-                Piece(Figure::Bishop, Color::Black, "g4"),
+      VERIFY(makePiece("Bg4", Color::Black) == Piece(Figure::Bishop, Color::Black, "g4"),
              caseLabel);
-      VERIFY(denotatePiece("Kh8", Color::White) ==
-                Piece(Figure::King, Color::White, "h8"),
+      VERIFY(makePiece("Kh8", Color::White) == Piece(Figure::King, Color::White, "h8"),
              caseLabel);
-      VERIFY(denotatePiece("h8", Color::White) == Piece(Figure::Pawn, Color::White, "h8"),
+      VERIFY(makePiece("h8", Color::White) == Piece(Figure::Pawn, Color::White, "h8"),
              caseLabel);
-      VERIFY(denotatePiece("c4", Color::Black) == Piece(Figure::Pawn, Color::Black, "c4"),
+      VERIFY(makePiece("c4", Color::Black) == Piece(Figure::Pawn, Color::Black, "c4"),
              caseLabel);
    }
    {
       const std::string caseLabel =
-         "denotatePiece without color in notation for invalid notation";
+         "makePiece without color in notation for invalid notation";
 
-      VERIFY(denotatePiece("Tg4", Color::White) ==
+      VERIFY(makePiece("Tg4", Color::White) ==
                 Piece(Figure::Pawn, Color::White, Square()),
              caseLabel);
-      VERIFY(denotatePiece("Rr0", Color::Black) ==
+      VERIFY(makePiece("Rr0", Color::Black) ==
                 Piece(Figure::Rook, Color::Black, Square()),
              caseLabel);
    }
@@ -604,6 +599,7 @@ void testPawnDirection()
              caseLabel);
    }
 }
+
 } // namespace
 
 
@@ -613,10 +609,10 @@ void testPiece()
 {
    testColorNegation();
    testNotateColor();
-   testDenotateColor();
+   testMakeColor();
 
    testNotateFigure();
-   testDenotateFigure();
+   testMakeFigure();
 
    testPieceDefaultCtor();
    testPieceCtor();
@@ -632,8 +628,8 @@ void testPiece()
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
    testSwapPieces();
-   testDenotatePieceWithColor();
-   testDenotatePieceWithoutColor();
+   testMakePieceWithColor();
+   testMakePieceWithoutColor();
 
    testIsPawnOnInitialRank();
    testPawnDirection();

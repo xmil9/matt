@@ -216,57 +216,57 @@ void testSwapSquares()
 }
 
 
-void testDenotateSquare()
+void testMakeSquare()
 {
    {
-      const std::string caseLabel = "denotateSquare for valid notations";
+      const std::string caseLabel = "makeSquare for valid notations";
 
-      VERIFY(denotateSquare("a1") == Square('a', '1'), caseLabel);
-      VERIFY(denotateSquare("b1") == Square('b', '1'), caseLabel);
-      VERIFY(denotateSquare("c1") == Square('c', '1'), caseLabel);
-      VERIFY(denotateSquare("d1") == Square('d', '1'), caseLabel);
-      VERIFY(denotateSquare("e1") == Square('e', '1'), caseLabel);
-      VERIFY(denotateSquare("f1") == Square('f', '1'), caseLabel);
-      VERIFY(denotateSquare("g1") == Square('g', '1'), caseLabel);
-      VERIFY(denotateSquare("h1") == Square('h', '1'), caseLabel);
-      VERIFY(denotateSquare("a1") == Square('a', '1'), caseLabel);
-      VERIFY(denotateSquare("a2") == Square('a', '2'), caseLabel);
-      VERIFY(denotateSquare("a3") == Square('a', '3'), caseLabel);
-      VERIFY(denotateSquare("a4") == Square('a', '4'), caseLabel);
-      VERIFY(denotateSquare("a5") == Square('a', '5'), caseLabel);
-      VERIFY(denotateSquare("a6") == Square('a', '6'), caseLabel);
-      VERIFY(denotateSquare("a7") == Square('a', '7'), caseLabel);
-      VERIFY(denotateSquare("a8") == Square('a', '8'), caseLabel);
+      VERIFY(makeSquare("a1") == Square('a', '1'), caseLabel);
+      VERIFY(makeSquare("b1") == Square('b', '1'), caseLabel);
+      VERIFY(makeSquare("c1") == Square('c', '1'), caseLabel);
+      VERIFY(makeSquare("d1") == Square('d', '1'), caseLabel);
+      VERIFY(makeSquare("e1") == Square('e', '1'), caseLabel);
+      VERIFY(makeSquare("f1") == Square('f', '1'), caseLabel);
+      VERIFY(makeSquare("g1") == Square('g', '1'), caseLabel);
+      VERIFY(makeSquare("h1") == Square('h', '1'), caseLabel);
+      VERIFY(makeSquare("a1") == Square('a', '1'), caseLabel);
+      VERIFY(makeSquare("a2") == Square('a', '2'), caseLabel);
+      VERIFY(makeSquare("a3") == Square('a', '3'), caseLabel);
+      VERIFY(makeSquare("a4") == Square('a', '4'), caseLabel);
+      VERIFY(makeSquare("a5") == Square('a', '5'), caseLabel);
+      VERIFY(makeSquare("a6") == Square('a', '6'), caseLabel);
+      VERIFY(makeSquare("a7") == Square('a', '7'), caseLabel);
+      VERIFY(makeSquare("a8") == Square('a', '8'), caseLabel);
    }
    {
       const std::string caseLabel =
-         "denotateSquare for strings starting with valid notations";
+         "makeSquare for strings starting with valid notations";
 
-      VERIFY(denotateSquare("a1dbskuu") == Square('a', '1'), caseLabel);
-      VERIFY(denotateSquare("h873kHH") == Square('h', '8'), caseLabel);
+      VERIFY(makeSquare("a1dbskuu") == Square('a', '1'), caseLabel);
+      VERIFY(makeSquare("h873kHH") == Square('h', '8'), caseLabel);
    }
    {
       const std::string caseLabel =
-         "denotateSquare for invalid notations with valid length";
+         "makeSquare for invalid notations with valid length";
 
-      VERIFY(denotateSquare("i1") == Square(), caseLabel);
-      VERIFY(denotateSquare("a9") == Square(), caseLabel);
-      VERIFY(denotateSquare("B6") == Square(), caseLabel);
-      VERIFY(denotateSquare("h*") == Square(), caseLabel);
-      VERIFY(denotateSquare("4d") == Square(), caseLabel);
+      VERIFY(makeSquare("i1") == Square(), caseLabel);
+      VERIFY(makeSquare("a9") == Square(), caseLabel);
+      VERIFY(makeSquare("B6") == Square(), caseLabel);
+      VERIFY(makeSquare("h*") == Square(), caseLabel);
+      VERIFY(makeSquare("4d") == Square(), caseLabel);
    }
    {
       const std::string caseLabel =
-         "denotateSquare for invalid notations with invalid length";
+         "makeSquare for invalid notations with invalid length";
 
-      VERIFY(denotateSquare("1") == Square(), caseLabel);
-      VERIFY(denotateSquare("a") == Square(), caseLabel);
-      VERIFY(denotateSquare("B6skd8") == Square(), caseLabel);
+      VERIFY(makeSquare("1") == Square(), caseLabel);
+      VERIFY(makeSquare("a") == Square(), caseLabel);
+      VERIFY(makeSquare("B6skd8") == Square(), caseLabel);
    }
    {
-      const std::string caseLabel = "denotateSquare for empty string";
+      const std::string caseLabel = "makeSquare for empty string";
 
-      VERIFY(denotateSquare("") == Square(), caseLabel);
+      VERIFY(makeSquare("") == Square(), caseLabel);
    }
 }
 
@@ -533,7 +533,7 @@ void testSquare()
    testSquareNotate();
    testSquareOperatorBool();
    testSwapSquares();
-   testDenotateSquare();
+   testMakeSquare();
    testSquareEquality();
    testSquareInequality();
 

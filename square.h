@@ -82,7 +82,7 @@ inline bool operator!=(Square a, Square b)
 
 ///////////////////
 
-inline Square denotateSquare(std::string_view notation)
+inline Square makeSquare(std::string_view notation)
 {
    if (notation.size() < 2)
       return Square{};

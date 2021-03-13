@@ -41,4 +41,4 @@ class Position
 
 ///////////////////
 
-Position denotatePosition(std::string_view notation);
+Position makePosition(std::string_view notation);

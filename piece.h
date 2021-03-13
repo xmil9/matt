@@ -38,7 +38,7 @@ inline std::string notateColor(Color c)
    }
 }
 
-inline Color denotateColor(char notation)
+inline Color makeColor(char notation)
 {
    switch (notation)
    {
@@ -51,11 +51,11 @@ inline Color denotateColor(char notation)
    }
 }
 
-inline Color denotateColor(std::string_view notation)
+inline Color makeColor(std::string_view notation)
 {
    if (notation.empty())
       return Color::White;
-   return denotateColor(notation[0]);
+   return makeColor(notation[0]);
 }
 
 
@@ -92,7 +92,7 @@ inline std::string notateFigure(Figure f)
    }
 }
 
-inline Figure denotateFigure(char notation)
+inline Figure makeFigure(char notation)
 {
    switch (notation)
    {
@@ -111,11 +111,11 @@ inline Figure denotateFigure(char notation)
    }
 }
 
-inline Figure denotateFigure(std::string_view notation)
+inline Figure makeFigure(std::string_view notation)
 {
    if (notation == "")
       return Figure::Pawn;
-   return denotateFigure(notation[0]);
+   return makeFigure(notation[0]);
 }
 
 
@@ -198,8 +198,8 @@ inline bool operator==(const std::optional<Piece>& a, const Piece& b)
 
 ///////////////////
 
-Piece denotatePiece(std::string_view notation);
-Piece denotatePiece(std::string_view notation, Color side);
+Piece makePiece(std::string_view notation);
+Piece makePiece(std::string_view notation, Color side);
 
 bool isPawnOnInitialRank(const Piece& pawn);
 Offset pawnDirection(const Piece& pawn);

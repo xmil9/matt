@@ -106,7 +106,7 @@ float Position::calcScore() const
 
 ///////////////////
 
-Position denotatePosition(std::string_view notation)
+Position makePosition(std::string_view notation)
 {
    const std::vector<std::string> pieceNotations =
       esl::split(std::string{notation}, PieceDelim);
@@ -114,7 +114,7 @@ Position denotatePosition(std::string_view notation)
    std::vector<Piece> pieces;
    std::transform(
       begin(pieceNotations), end(pieceNotations), std::back_inserter(pieces),
-      [](const std::string& pieceNotation) { return denotatePiece(pieceNotation); });
+      [](const std::string& pieceNotation) { return makePiece(pieceNotation); });
 
    return Position{pieces};
 }
