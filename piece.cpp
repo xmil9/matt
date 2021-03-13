@@ -265,18 +265,16 @@ Piece denotatePiece(std::string_view notation, Color side)
 
 bool isPawnOnInitialRank(const Piece& pawn)
 {
-   assert(pawn.isFigure(Figure::Pawn));
    if (!pawn.isFigure(Figure::Pawn))
       return false;
 
-   const char initialRank = pawn.color() == Color::White ? 2 : 7;
+   const char initialRank = pawn.color() == Color::White ? '2' : '7';
    return pawn.location().rank() == initialRank;
 }
 
 
 Offset pawnDirection(const Piece& pawn)
 {
-   assert(pawn.isFigure(Figure::Pawn));
    if (!pawn.isFigure(Figure::Pawn))
       return {0, 0};
    return {0, pawn.color() == Color::White ? 1 : -1};

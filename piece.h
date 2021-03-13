@@ -133,6 +133,7 @@ class Piece
    bool isFigure(Figure f) const { return m_figure == f; }
    std::string notate() const;
    std::string notateWithColor() const;
+   // Does not prevent moves that are illegal for the piece.
    Piece move(Square to) const;
    std::vector<Move> nextMoves(const Position& pos) const;
    std::vector<Position> nextPositions(const Position& pos) const;
@@ -169,9 +170,6 @@ inline std::string Piece::notateWithColor() const
    return notateFigure(m_figure) + notateColor(m_color) + m_loc.notate();
 }
 
-Piece denotatePiece(std::string_view notation);
-Piece denotatePiece(std::string_view notation, Color side);
-
 inline Piece Piece::move(Square to) const
 {
    return Piece{m_figure, m_color, to};
@@ -199,6 +197,9 @@ inline bool operator==(const std::optional<Piece>& a, const Piece& b)
 
 
 ///////////////////
+
+Piece denotatePiece(std::string_view notation);
+Piece denotatePiece(std::string_view notation, Color side);
 
 bool isPawnOnInitialRank(const Piece& pawn);
 Offset pawnDirection(const Piece& pawn);
