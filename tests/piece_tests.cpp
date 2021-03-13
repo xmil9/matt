@@ -380,6 +380,52 @@ void testPieceNextMovesForKing()
 }
 
 
+void testPieceNextMovesForQueen()
+{
+   {
+      const std::string caseLabel = "Piece::nextMoves for queen without other pieces";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         {"Qwd4", {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2", "g1",
+                   "c4", "b4", "a4", "e4", "f4", "g4", "h4", "c5", "b6",
+                   "a7", "d5", "d6", "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // On first file
+         {"Qba3", {"a2", "a1", "a4", "a5", "a6", "a7", "a8", "b2", "c1", "b3", "c3",
+                   "d3", "e3", "f3", "g3", "h3", "b4", "c5", "d6", "e7", "f8"}},
+         // On last file
+         {"Qwh7", {"h1", "h2", "h3", "h4", "h5", "h6", "h8", "a7", "b7", "c7", "d7",
+                   "e7", "f7", "g7", "g8", "g6", "f5", "e4", "d3", "c2", "b1"}},
+         // On first rank
+         {"Qbe1", {"e2", "e3", "e4", "e5", "e6", "e7", "e8", "a1", "b1", "c1", "d1",
+                   "f1", "g1", "h1", "d2", "c3", "b4", "a5", "f2", "g3", "h4"}},
+         // On last rank
+         {"Qbb8", {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "a8", "c8", "d8", "e8",
+                   "f8", "g8", "h8", "a7", "c7", "d6", "e5", "f4", "g3", "h2"}},
+         // In corners
+         {"Qwa1", {"a2", "a3", "a4", "a5", "a6", "a7", "a8", "b1", "c1", "d1", "e1",
+                   "f1", "g1", "h1", "b2", "c3", "d4", "e5", "f6", "g7", "h8"}},
+         {"Qwa8", {"a1", "a2", "a3", "a4", "a5", "a6", "a7", "b8", "c8", "d8", "e8",
+                   "f8", "g8", "h8", "b7", "c6", "d5", "e4", "f3", "g2", "h1"}},
+         {"Qbh1", {"h2", "h3", "h4", "h5", "h6", "h7", "h8", "g1", "f1", "e1", "d1",
+                   "c1", "b1", "a1", "g2", "f3", "e4", "d5", "c6", "b7", "a8"}},
+         {"Qbh8", {"h7", "h6", "h5", "h4", "h3", "h2", "h1", "g8", "f8", "e8", "d8",
+                   "c8", "b8", "a8", "g7", "f6", "e5", "d4", "c3", "b2", "a1"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         Position pos({piece});
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+}
+
+
 void testPieceEquality()
 {
    {
@@ -624,6 +670,7 @@ void testPiece()
    testPieceNotateWithColor();
    testPieceMove();
    testPieceNextMovesForKing();
+   testPieceNextMovesForQueen();
    testPieceEquality();
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
