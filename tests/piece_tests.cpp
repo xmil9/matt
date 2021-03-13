@@ -3,8 +3,14 @@
 // MIT license
 //
 #include "piece_tests.h"
+#include "move.h"
 #include "piece.h"
+#include "position.h"
+#include "square.h"
 #include "test_util.h"
+#include <algorithm>
+#include <iterator>
+#include <vector>
 
 
 namespace
@@ -246,6 +252,130 @@ void testPieceMove()
       VERIFY(Piece(Figure::King, Color::Black, "f4").move(Square("a1")).location() ==
                 Square("a1"),
              caseLabel);
+   }
+}
+
+
+bool verifyNextMoves(const std::vector<Move>& moves, const Piece& piece,
+                     const Position& pos,
+                     const std::vector<std::string>& expectedLocations)
+{
+   if (moves.size() != expectedLocations.size())
+      return false;
+
+   std::vector<Move> expectedMoves;
+   expectedMoves.reserve(expectedLocations.size());
+   std::transform(begin(expectedLocations), end(expectedLocations),
+                  std::back_inserter(expectedMoves),
+                  [&piece, &pos](const std::string& loc) {
+                     const Square to{loc};
+                     return Move{piece, to, notateMove(piece, to, pos)};
+                  });
+
+   const auto endExpected = end(expectedMoves);
+   for (const Move& move : moves)
+   {
+      // Verify move is expected.
+      if (std::find(begin(expectedMoves), endExpected, move) == endExpected)
+         return false;
+      // Verify move is unique.
+      if (std::count(begin(moves), end(moves), move) != 1)
+         return false;
+   }
+
+   return true;
+}
+
+
+void testPieceNextMovesForKing()
+{
+   {
+      const std::string caseLabel = "Piece::nextMoves for king without other pieces";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         {"Kwd4", {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
+         // On first file
+         {"Kba3", {"a2", "a4", "b2", "b3", "b4"}},
+         // On last file
+         {"Kwh7", {"g6", "g7", "g8", "h6", "h8"}},
+         // On first rank
+         {"Kbe1", {"d1", "d2", "e2", "f1", "f2"}},
+         // On last rank
+         {"Kbb8", {"a7", "a8", "b7", "c7", "c8"}},
+         // In corners
+         {"Kwa1", {"a2", "b2", "b1"}},
+         {"Kwa8", {"a7", "b8", "b7"}},
+         {"Kbh1", {"h2", "g1", "g2"}},
+         {"Kbh8", {"h7", "g7", "g8"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = denotatePiece(test.piece);
+         Position pos({piece});
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel = "Piece::nextMoves for king with pieces of same color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Kwd4", {"Bwg4", "wc2"}, {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
+         // Blocking some squares.
+         {"Kwd4", {"Bwc4", "we3"}, {"c3", "c5", "d3", "d5", "e4", "e5"}},
+         // Blocking all squares.
+         {"Kba1", {"ba2", "Rbb2", "Qbb1"}, {}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = denotatePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(
+            begin(test.otherPieces), end(test.otherPieces), std::back_inserter(all),
+            [](const std::string& notation) { return denotatePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for king with pieces of other color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not occupying.
+         {"Kwd4", {"Bbg4", "bc2"}, {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
+         // Occupying some squares.
+         {"Kwd4", {"Bbc4", "be3"}, {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
+         // Occupying all squares.
+         {"Kba1", {"wa2", "Rwb2", "Qwb1"}, {"a2", "b2", "b1"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = denotatePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(
+            begin(test.otherPieces), end(test.otherPieces), std::back_inserter(all),
+            [](const std::string& notation) { return denotatePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
    }
 }
 
@@ -497,6 +627,7 @@ void testPiece()
    testPieceNotate();
    testPieceNotateWithColor();
    testPieceMove();
+   testPieceNextMovesForKing();
    testPieceEquality();
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
