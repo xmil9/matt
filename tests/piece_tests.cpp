@@ -510,6 +510,135 @@ void testPieceNextMovesForQueen()
 }
 
 
+void testPieceNextMovesForRook()
+{
+   {
+      const std::string caseLabel = "Piece::nextMoves for rook without other pieces";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         {"Rwd4",
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "f4", "g4", "h4", "d5", "d6", "d7",
+           "d8"}},
+         // On first file
+         {"Rba3",
+          {"a2", "a1", "a4", "a5", "a6", "a7", "a8", "b3", "c3", "d3", "e3", "f3", "g3",
+           "h3"}},
+         // On last file
+         {"Rwh7",
+          {"h1", "h2", "h3", "h4", "h5", "h6", "h8", "a7", "b7", "c7", "d7", "e7", "f7",
+           "g7"}},
+         // On first rank
+         {"Rbe1",
+          {"e2", "e3", "e4", "e5", "e6", "e7", "e8", "a1", "b1", "c1", "d1", "f1", "g1",
+           "h1"}},
+         // On last rank
+         {"Rbb8",
+          {"b1", "b2", "b3", "b4", "b5", "b6", "b7", "a8", "c8", "d8", "e8", "f8", "g8",
+           "h8"}},
+         // In corners
+         {"Rwa1",
+          {"a2", "a3", "a4", "a5", "a6", "a7", "a8", "b1", "c1", "d1", "e1", "f1", "g1",
+           "h1"}},
+         {"Rwa8",
+          {"a1", "a2", "a3", "a4", "a5", "a6", "a7", "b8", "c8", "d8", "e8", "f8", "g8",
+           "h8"}},
+         {"Rbh1",
+          {"h2", "h3", "h4", "h5", "h6", "h7", "h8", "g1", "f1", "e1", "d1", "c1", "b1",
+           "a1"}},
+         {"Rbh8",
+          {"h7", "h6", "h5", "h4", "h3", "h2", "h1", "g8", "f8", "e8", "d8", "c8", "b8",
+           "a8"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         Position pos({piece});
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel = "Piece::nextMoves for rook with pieces of same color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Rwd4",
+          {"Bwa5", "wc2"},
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "f4", "g4", "h4", "d5", "d6", "d7",
+           "d8"}},
+         // Blocking squares along rank.
+         {"Rwd4",
+          {"wf4"},
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "d5", "d6", "d7", "d8"}},
+         // Blocking squares along file.
+         {"Rbd4",
+          {"Rbd6"},
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "f4", "g4", "h4", "d5"}},
+         // Blocking all squares.
+         {"Rba1", {"ba2", "Kbb1"}, {}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for rook with pieces of other color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Rwd4",
+          {"Bba5", "bc2"},
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "f4", "g4", "h4", "d5", "d6", "d7",
+           "d8"}},
+         // Blocking squares along rank.
+         {"Rwd4",
+          {"bf4"},
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "f4", "d5", "d6", "d7", "d8"}},
+         // Blocking squares along file.
+         {"Rbd4",
+          {"Rwd6"},
+          {"d3", "d2", "d1", "c4", "b4", "a4", "e4", "f4", "g4", "h4", "d5", "d6"}},
+         // Blocking all squares.
+         {"Rba1", {"wa2", "Kwb1"}, {"a2", "b1"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+}
+
+
 void testPieceEquality()
 {
    {
@@ -755,6 +884,7 @@ void testPiece()
    testPieceMove();
    testPieceNextMovesForKing();
    testPieceNextMovesForQueen();
+   testPieceNextMovesForRook();
    testPieceEquality();
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
