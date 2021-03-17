@@ -358,11 +358,11 @@ void testPieceNextMovesForKing()
          std::vector<std::string> otherPieces;
          std::vector<std::string> nextLocations;
       } testCases[] = {
-         // Not occupying.
+         // Not blocking.
          {"Kwd4", {"Bbg4", "bc2"}, {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
-         // Occupying some squares.
+         // Blocking some squares.
          {"Kwd4", {"Bbc4", "be3"}, {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
-         // Occupying all squares.
+         // Blocking all squares.
          {"Kba1", {"wa2", "Rwb2", "Qwb1"}, {"a2", "b2", "b1"}},
       };
       for (const auto& test : testCases)
@@ -419,6 +419,90 @@ void testPieceNextMovesForQueen()
       {
          Piece piece = makePiece(test.piece);
          Position pos({piece});
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for queen with pieces of same color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Qwd4", {"Bwa5", "wc2"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3",
+                                    "f2", "g1", "c4", "b4", "a4", "e4", "f4",
+                                    "g4", "h4", "c5", "b6", "a7", "d5", "d6",
+                                    "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along diagonal.
+         {"Qwd4", {"Bwc5"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2",
+                             "g1", "c4", "b4", "a4", "e4", "f4", "g4", "h4",
+                             "d5", "d6", "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along rank.
+         {"Qwd4", {"wf4"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2",
+                            "g1", "c4", "b4", "a4", "e4", "c5", "b6", "a7",
+                            "d5", "d6", "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along file.
+         {"Qbd4", {"Rbd6"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2",
+                             "g1", "c4", "b4", "a4", "e4", "f4", "g4", "h4",
+                             "c5", "b6", "a7", "d5", "e5", "f6", "g7", "h8"}},
+         // Blocking all squares.
+         {"Qba1", {"ba2", "Rbb2", "Kbb1"}, {}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for queen with pieces of other color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Qwd4", {"Bba5", "bc2"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3",
+                                    "f2", "g1", "c4", "b4", "a4", "e4", "f4",
+                                    "g4", "h4", "c5", "b6", "a7", "d5", "d6",
+                                    "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along diagonal.
+         {"Qwd4", {"Bbc5"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2", "g1",
+                             "c4", "b4", "a4", "e4", "f4", "g4", "h4", "c5", "d5",
+                             "d6", "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along rank.
+         {"Qwd4", {"bf4"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2", "g1",
+                            "c4", "b4", "a4", "e4", "f4", "c5", "b6", "a7", "d5",
+                            "d6", "d7", "d8", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along file.
+         {"Qbd4", {"Rwd6"}, {"c3", "b2", "a1", "d3", "d2", "d1", "e3", "f2", "g1",
+                             "c4", "b4", "a4", "e4", "f4", "g4", "h4", "c5", "b6",
+                             "a7", "d5", "d6", "e5", "f6", "g7", "h8"}},
+         // Blocking all squares.
+         {"Qba1", {"wa2", "Rwb2", "Kwb1"}, {"a2", "b2", "b1"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
+         Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
       }
