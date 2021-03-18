@@ -639,6 +639,107 @@ void testPieceNextMovesForRook()
 }
 
 
+void testPieceNextMovesForBishop()
+{
+   {
+      const std::string caseLabel = "Piece::nextMoves for bishop without other pieces";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         {"Bwd4",
+          {"c3", "b2", "a1", "e3", "f2", "g1", "c5", "b6", "a7", "e5", "f6", "g7", "h8"}},
+         // On first file
+         {"Bba3", {"b2", "c1", "b4", "c5", "d6", "e7", "f8"}},
+         // On last file
+         {"Bwh7", {"g8", "g6", "f5", "e4", "d3", "c2", "b1"}},
+         // On first rank
+         {"Bbe1", {"d2", "c3", "b4", "a5", "f2", "g3", "h4"}},
+         // On last rank
+         {"Bbb8", {"a7", "c7", "d6", "e5", "f4", "g3", "h2"}},
+         // In corners
+         {"Bwa1", {"b2", "c3", "d4", "e5", "f6", "g7", "h8"}},
+         {"Bwa8", {"b7", "c6", "d5", "e4", "f3", "g2", "h1"}},
+         {"Bbh1", {"g2", "f3", "e4", "d5", "c6", "b7", "a8"}},
+         {"Bbh8", {"g7", "f6", "e5", "d4", "c3", "b2", "a1"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         Position pos({piece});
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for bishop with pieces of same color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Bwd4",
+          {"Nwa5", "wc2"},
+          {"c3", "b2", "a1", "e3", "f2", "g1", "c5", "b6", "a7", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along diagonal.
+         {"Bwd4", {"Nwc5"}, {"c3", "b2", "a1", "e3", "f2", "g1", "e5", "f6", "g7", "h8"}},
+         // Blocking all squares.
+         {"Bba1", {"Rbb2"}, {}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for bishop with pieces of other color";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         // Not blocking.
+         {"Bwd4",
+          {"Nba5", "bc2"},
+          {"c3", "b2", "a1", "e3", "f2", "g1", "c5", "b6", "a7", "e5", "f6", "g7", "h8"}},
+         // Blocking squares along diagonal.
+         {"Bwd4",
+          {"Nbc5"},
+          {"c3", "b2", "a1", "e3", "f2", "g1", "e5", "f6", "g7", "h8", "c5"}},
+         // Blocking all squares.
+         {"Bba1", {"Rwb2"}, {"b2"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece = makePiece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return makePiece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+}
+
+
 void testPieceEquality()
 {
    {
@@ -885,6 +986,7 @@ void testPiece()
    testPieceNextMovesForKing();
    testPieceNextMovesForQueen();
    testPieceNextMovesForRook();
+   testPieceNextMovesForBishop();
    testPieceEquality();
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
