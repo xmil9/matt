@@ -931,6 +931,42 @@ void testPieceNextMovesForPawn()
 }
 
 
+void testPieceNextPositionsForKing()
+{
+   // todo - write once tests for Position are in place.
+}
+
+
+void testPieceNextPositionsForQueen()
+{
+   // todo - write once tests for Position are in place.
+}
+
+
+void testPieceNextPositionsForRook()
+{
+   // todo - write once tests for Position are in place.
+}
+
+
+void testPieceNextPositionsForBishop()
+{
+   // todo - write once tests for Position are in place.
+}
+
+
+void testPieceNextPositionsForKnight()
+{
+   // todo - write once tests for Position are in place.
+}
+
+
+void testPieceNextPositionsForPawn()
+{
+   // todo - write once tests for Position are in place.
+}
+
+
 void testPieceEquality()
 {
    {
@@ -1180,6 +1216,12 @@ void testPiece()
    testPieceNextMovesForBishop();
    testPieceNextMovesForKnight();
    testPieceNextMovesForPawn();
+   testPieceNextPositionsForKing();
+   testPieceNextPositionsForQueen();
+   testPieceNextPositionsForRook();
+   testPieceNextPositionsForBishop();
+   testPieceNextPositionsForKnight();
+   testPieceNextPositionsForPawn();
    testPieceEquality();
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
