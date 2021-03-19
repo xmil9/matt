@@ -166,9 +166,13 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
       collectMoveTo(pawn, *to, pos, moves);
 
    // Move two squares forward from starting square.
-   if (isPawnOnInitialRank(pawn))
+   if (isPawnOnInitialRank(pawn) &&
+       // Only if moving one square forward succeeded.
+       !moves.empty())
+   {
       if (const auto to = pawn.location() + 2 * dir; to.has_value())
          collectMoveTo(pawn, *to, pos, moves);
+   }
 
    // Capture diagonally on lower file.
    if (const auto to = pawn.location() + dir + Offset{-1, 0}; to.has_value())
