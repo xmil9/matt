@@ -39,9 +39,9 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
    else
    {
       // Occupied square:
-      // - can move to it if occupied by other color (capture)
+      // - can move to it if occupied by other color (capture unless piece is a pawn)
       // - further squares in this direction are not accessible
-      if (occupant->color() != piece.color())
+      if (occupant->color() != piece.color() && !piece.isFigure(Figure::Pawn))
          moves.push_back(makeMove(piece, to, pos));
    }
 
