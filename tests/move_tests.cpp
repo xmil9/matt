@@ -4,6 +4,7 @@
 //
 #include "move_tests.h"
 #include "move.h"
+#include "position.h"
 #include "test_util.h"
 
 
@@ -44,7 +45,7 @@ void testMoveFullCtor()
 
 void testMovePieceAccessor()
 {
-   // Skip - It's trivial.
+   // Trivial - skip.
 }
 
 
@@ -61,13 +62,13 @@ void testMoveFromAccessor()
 
 void testMoveToAccessor()
 {
-   // Skip - It's trivial.
+   // Trivial - skip.
 }
 
 
 void testMoveNotate()
 {
-   // Skip - It's trivial.
+   // Trivial - skip.
 }
 
 
@@ -99,6 +100,78 @@ void testMoveSwap()
    }
 }
 
+
+void testMoveEquality()
+{
+   {
+      const std::string caseLabel = "Move equality for equal moves";
+
+      const Move a{makePiece("Bwh4"), makeSquare("e7"), "Be7"};
+      const Move b{makePiece("Bwh4"), makeSquare("e7"), "Be7"};
+      VERIFY(a == b, caseLabel);
+   }
+   {
+      const std::string caseLabel = "Move equality for unequal moves";
+
+      const Move a{makePiece("Rwh4"), makeSquare("e4"), "Re4"};
+      const Move b{makePiece("Rwh4"), makeSquare("h1"), "Rh1"};
+      const Move c{makePiece("Qwh4"), makeSquare("e4"), "Qe4"};
+      VERIFY(!(a == b), caseLabel);
+      VERIFY(!(a == c), caseLabel);
+   }
+}
+
+
+void testMoveInequality()
+{
+   {
+      const std::string caseLabel = "Move inequality for equal moves";
+
+      const Move a{makePiece("Bwh4"), makeSquare("e7"), "Be7"};
+      const Move b{makePiece("Bwh4"), makeSquare("e7"), "Be7"};
+      VERIFY(!(a != b), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Move inequality for unequal moves";
+
+      const Move a{makePiece("Rwh4"), makeSquare("e4"), "Re4"};
+      const Move b{makePiece("Rwh4"), makeSquare("h1"), "Rh1"};
+      const Move c{makePiece("Qwh4"), makeSquare("e4"), "Qe4"};
+      VERIFY(a != b, caseLabel);
+      VERIFY(a != c, caseLabel);
+   }
+}
+
+
+void testNotateMove()
+{
+   {
+      const std::string caseLabel = "notateMove for non-capturing moves";
+
+      VERIFY(notateMove(makePiece("Qbd8"), makeSquare("d5"), makePosition("Qbd8")) ==
+                "Qd5",
+             caseLabel);
+      VERIFY(notateMove(makePiece("Kwe1"), makeSquare("d2"), makePosition("Kwe1")) ==
+                "Kd2",
+             caseLabel);
+      VERIFY(notateMove(makePiece("bf5"), makeSquare("f4"), makePosition("bf5")) == "f4",
+             caseLabel);
+   }
+   {
+      const std::string caseLabel = "notateMove for capturing moves";
+
+      VERIFY(notateMove(makePiece("Qbd8"), makeSquare("d5"), makePosition("Qbd8 Bwd5")) ==
+                "Qxd5",
+             caseLabel);
+      VERIFY(notateMove(makePiece("Kwe1"), makeSquare("d2"), makePosition("Kwe1 bd2")) ==
+                "Kxd2",
+             caseLabel);
+      VERIFY(notateMove(makePiece("bf5"), makeSquare("e4"), makePosition("bf5 Nwe4")) ==
+                "fxe4",
+             caseLabel);
+   }
+}
+
 } // namespace
 
 
@@ -114,4 +187,7 @@ void testMove()
    testMoveNotate();
    testMoveMovedPiece();
    testMoveSwap();
+   testMoveEquality();
+   testMoveInequality();
+   testNotateMove();
 }
