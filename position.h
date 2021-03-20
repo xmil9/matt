@@ -5,6 +5,7 @@
 #pragma once
 #include "piece.h"
 #include "record.h"
+#include <string>
 #include <vector>
 
 

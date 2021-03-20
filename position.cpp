@@ -66,7 +66,7 @@ std::string Position::notate() const
    std::stringstream notation;
    std::transform(begin(m_pieces), end(m_pieces),
                   std::ostream_iterator<std::string>(notation, PieceDelim),
-                  [](const auto& piece) { return piece.notateWithColor(); });
+                  [](const auto& piece) { return piece.notate(Piece::Notation::FCL); });
    return esl::trimRight(notation.str(), PieceDelimCh);
 }
 
