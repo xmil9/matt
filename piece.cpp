@@ -244,6 +244,17 @@ std::vector<Position> Piece::nextPositions(const Position& pos) const
 }
 
 
+std::string Piece::notate(Notation format) const
+{
+   std::string notation = notateFigure(m_figure);
+   if (format == Notation::FC || format == Notation::FCL)
+      notation += notateColor(m_color);
+   if (format == Notation::FL || format == Notation::FCL)
+      notation += m_loc.notate();
+   return notation;
+}
+
+
 Piece makePiece(std::string_view notation)
 {
    const Figure figure = makeFigure(notation);

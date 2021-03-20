@@ -196,34 +196,78 @@ void testPieceIsFigure()
 void testPieceNotate()
 {
    {
-      const std::string caseLabel = "Piece::notate";
+      const std::string caseLabel = "Piece::notate for figure only";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").notate() == "Kf4", caseLabel);
-      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notate() == "Qa2", caseLabel);
-      VERIFY(Piece(Figure::Rook, Color::White, "h8").notate() == "Rh8", caseLabel);
-      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notate() == "Bc6", caseLabel);
-      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notate() == "Nb8", caseLabel);
-      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notate() == "b7", caseLabel);
+      VERIFY(Piece(Figure::King, Color::Black, "f4").notate(Piece::Notation::F) == "K",
+             caseLabel);
+      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notate(Piece::Notation::F) == "Q",
+             caseLabel);
+      VERIFY(Piece(Figure::Rook, Color::White, "h8").notate(Piece::Notation::F) == "R",
+             caseLabel);
+      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notate(Piece::Notation::F) == "B",
+             caseLabel);
+      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notate(Piece::Notation::F) == "N",
+             caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notate(Piece::Notation::F) == "",
+             caseLabel);
    }
-}
-
-
-void testPieceNotateWithColor()
-{
    {
-      const std::string caseLabel = "Piece::notateWithColor";
+      const std::string caseLabel = "Piece::notate for figure and location";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").notateWithColor() == "Kbf4",
+      VERIFY(Piece(Figure::King, Color::Black, "f4").notate(Piece::Notation::FL) == "Kf4",
              caseLabel);
-      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notateWithColor() == "Qba2",
+      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notate(Piece::Notation::FL) ==
+                "Qa2",
              caseLabel);
-      VERIFY(Piece(Figure::Rook, Color::White, "h8").notateWithColor() == "Rwh8",
+      VERIFY(Piece(Figure::Rook, Color::White, "h8").notate(Piece::Notation::FL) == "Rh8",
              caseLabel);
-      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notateWithColor() == "Bwc6",
+      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notate(Piece::Notation::FL) ==
+                "Bc6",
              caseLabel);
-      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notateWithColor() == "Nbb8",
+      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notate(Piece::Notation::FL) ==
+                "Nb8",
              caseLabel);
-      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notateWithColor() == "wb7",
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notate(Piece::Notation::FL) == "b7",
+             caseLabel);
+   }
+   {
+      const std::string caseLabel = "Piece::notate for figure and color";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").notate(Piece::Notation::FC) == "Kb",
+             caseLabel);
+      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notate(Piece::Notation::FC) == "Qb",
+             caseLabel);
+      VERIFY(Piece(Figure::Rook, Color::White, "h8").notate(Piece::Notation::FC) == "Rw",
+             caseLabel);
+      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notate(Piece::Notation::FC) ==
+                "Bw",
+             caseLabel);
+      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notate(Piece::Notation::FC) ==
+                "Nb",
+             caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notate(Piece::Notation::FC) == "w",
+             caseLabel);
+   }
+   {
+      const std::string caseLabel = "Piece::notate for figure, color, and location";
+
+      VERIFY(Piece(Figure::King, Color::Black, "f4").notate(Piece::Notation::FCL) ==
+                "Kbf4",
+             caseLabel);
+      VERIFY(Piece(Figure::Queen, Color::Black, "a2").notate(Piece::Notation::FCL) ==
+                "Qba2",
+             caseLabel);
+      VERIFY(Piece(Figure::Rook, Color::White, "h8").notate(Piece::Notation::FCL) ==
+                "Rwh8",
+             caseLabel);
+      VERIFY(Piece(Figure::Bishop, Color::White, "c6").notate(Piece::Notation::FCL) ==
+                "Bwc6",
+             caseLabel);
+      VERIFY(Piece(Figure::Knight, Color::Black, "b8").notate(Piece::Notation::FCL) ==
+                "Nbb8",
+             caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").notate(Piece::Notation::FCL) ==
+                "wb7",
              caseLabel);
    }
 }
@@ -894,7 +938,8 @@ void testPieceNextMovesForPawn()
       }
    }
    {
-      const std::string caseLabel = "Piece::nextMoves for pawn with pieces of other color";
+      const std::string caseLabel =
+         "Piece::nextMoves for pawn with pieces of other color";
 
       struct
       {
@@ -1208,7 +1253,6 @@ void testPiece()
    testPieceLocation();
    testPieceIsFigure();
    testPieceNotate();
-   testPieceNotateWithColor();
    testPieceMove();
    testPieceNextMovesForKing();
    testPieceNextMovesForQueen();

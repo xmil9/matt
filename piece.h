@@ -131,8 +131,6 @@ class Piece
    Color color() const { return m_color; }
    Square location() const { return m_loc; }
    bool isFigure(Figure f) const { return m_figure == f; }
-   std::string notate() const;
-   std::string notateWithColor() const;
    // Does not prevent moves that are illegal for the piece.
    Piece move(Square to) const;
    std::vector<Move> nextMoves(const Position& pos) const;
@@ -148,6 +146,19 @@ class Piece
       swap(a.m_loc, b.m_loc);
    }
 
+    // Notation formats:
+    // F = figure
+    // C = color
+    // L = location
+   enum class Notation
+   {
+      F,
+      FL,
+      FC,
+      FCL
+   };
+   std::string notate(Notation format = Notation::F) const;
+
  private:
    Figure m_figure = Figure::Pawn;
    Color m_color = Color::White;
@@ -158,16 +169,6 @@ class Piece
 inline Piece::Piece(Figure figure, Color color, Square loc)
 : m_figure{figure}, m_color{color}, m_loc{loc}
 {
-}
-
-inline std::string Piece::notate() const
-{
-   return notateFigure(m_figure) + m_loc.notate();
-}
-
-inline std::string Piece::notateWithColor() const
-{
-   return notateFigure(m_figure) + notateColor(m_color) + m_loc.notate();
 }
 
 inline Piece Piece::move(Square to) const
