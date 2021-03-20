@@ -24,11 +24,12 @@ class Move
    const std::string& notate() const { return m_notation; }
    Piece movedPiece() const { return m_piece.move(m_to); }
 
-   friend void swap(Move& a, Move& b)
+   friend void swap(Move& a, Move& b) noexcept
    {
       using std::swap;
       swap(a.m_piece, b.m_piece);
       swap(a.m_to, b.m_to);
+      swap(a.m_notation, b.m_notation);
    }
 
  private:
