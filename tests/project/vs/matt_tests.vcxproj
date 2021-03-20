@@ -20,11 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\matt_tests.cpp" />
+    <ClCompile Include="..\..\move_tests.cpp" />
     <ClCompile Include="..\..\piece_tests.cpp" />
     <ClCompile Include="..\..\square_tests.cpp" />
     <ClCompile Include="..\..\test_util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\move_tests.h" />
     <ClInclude Include="..\..\piece_tests.h" />
     <ClInclude Include="..\..\square_tests.h" />
     <ClInclude Include="..\..\test_util.h" />

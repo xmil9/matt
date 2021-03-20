@@ -2,6 +2,7 @@
 // Mar-2021, Michael Lindner
 // MIT license
 //
+#include "move_tests.h"
 #include "piece_tests.h"
 #include "square_tests.h"
 #include <cstdlib>
@@ -10,6 +11,7 @@
 
 int main()
 {
+   testMove();
    testSquare();
    testPiece();
 
