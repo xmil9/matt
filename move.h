@@ -51,7 +51,14 @@ inline bool operator==(const Move& a, const Move& b)
    return a.piece() == b.piece() && a.to() == b.to() && a.notate() == b.notate();
 }
 
+inline bool operator!=(const Move& a, const Move& b)
+{
+   return !(a == b);
+}
+
 
 ///////////////////
 
+// Returns notation for moving a given piece to a square.
+// Does not check if the move is valid.
 std::string notateMove(const Piece& piece, Square to, const Position& pos);
