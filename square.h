@@ -11,12 +11,23 @@
 
 ///////////////////
 
+inline bool isValidFile(char file)
+{
+   return file >= 'a' && file <= 'h';
+}
+
+inline bool isValidRank(char rank)
+{
+   return rank >= '1' && rank <= '8';
+}
+
+
+///////////////////
+
 class Square
 {
  public:
    Square() = default;
-   Square(char f, char r);
-   Square(int f, int r);
    explicit Square(std::string_view notation);
 
    char file() const { return m_file; }
@@ -37,24 +48,14 @@ class Square
    char m_rank = 0;
 };
 
-inline Square::Square(char f, char r) : m_file{f}, m_rank{r}
+
+inline Square::Square(std::string_view notation) : Square{}
 {
-   const bool isValidFile = m_file >= 'a' && m_file <= 'h';
-   const bool isValidRank = m_rank >= '1' && m_rank <= '8';
-   if (!isValidFile || !isValidRank)
+   if (notation.size() >= 2 && isValidFile(notation[0]) && isValidRank(notation[1]))
    {
-      m_file = 0;
-      m_rank = 0;
+      m_file = notation[0];
+      m_rank = notation[1];
    }
-}
-
-inline Square::Square(int f, int r) : Square{static_cast<char>(f), static_cast<char>(r)}
-{
-}
-
-inline Square::Square(std::string_view notation)
-   : Square{notation[0], notation[1]}
-{
 }
 
 inline std::string Square::notate() const
@@ -77,16 +78,6 @@ inline bool operator==(Square a, Square b)
 inline bool operator!=(Square a, Square b)
 {
    return !(a == b);
-}
-
-
-///////////////////
-
-inline Square makeSquare(std::string_view notation)
-{
-   if (notation.size() < 2)
-      return Square{};
-   return Square{notation[0], notation[1]};
 }
 
 
@@ -143,9 +134,14 @@ inline Offset operator*(int v, Offset off)
 
 inline std::optional<Square> operator+(Square from, Offset off)
 {
-   const Square to{from.file() + off.df(), from.rank() + off.dr()};
-   if (to)
-      return to;
+   const char toFile = from.file() + static_cast<char>(off.df());
+   const char toRank = from.rank() + static_cast<char>(off.dr());
+   if (isValidFile(toFile) && isValidRank(toRank))
+   {
+      std::string to(1, toFile);
+      to += toRank;
+      return Square{to};
+   }
    return std::nullopt;
 }
 

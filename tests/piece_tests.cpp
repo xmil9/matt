@@ -9,6 +9,7 @@
 #include "square.h"
 #include "test_util.h"
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <vector>
 
@@ -135,10 +136,10 @@ void testPieceCtor()
    {
       const std::string caseLabel = "Piece ctor";
 
-      const Piece p{Figure::King, Color::Black, Square{'c', '5'}};
+      const Piece p{Figure::King, Color::Black, Square{"c5"}};
       VERIFY(p.isFigure(Figure::King), caseLabel);
       VERIFY(p.color() == Color::Black, caseLabel);
-      VERIFY(p.location() == Square('c', '5'), caseLabel);
+      VERIFY(p.location() == Square("c5"), caseLabel);
    }
 }
 
@@ -151,7 +152,7 @@ void testPieceCtorWithLocationString()
       const Piece p{Figure::King, Color::Black, "c5"};
       VERIFY(p.isFigure(Figure::King), caseLabel);
       VERIFY(p.color() == Color::Black, caseLabel);
-      VERIFY(p.location() == Square('c', '5'), caseLabel);
+      VERIFY(p.location() == Square("c5"), caseLabel);
    }
 }
 
@@ -172,9 +173,9 @@ void testPieceLocation()
    {
       const std::string caseLabel = "Piece::location";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").location() == Square('f', '4'),
+      VERIFY(Piece(Figure::King, Color::Black, "f4").location() == Square("f4"),
              caseLabel);
-      VERIFY(Piece(Figure::Pawn, Color::White, "a1").location() == Square('a', '1'),
+      VERIFY(Piece(Figure::Pawn, Color::White, "a1").location() == Square("a1"),
              caseLabel);
    }
 }
@@ -1174,33 +1175,46 @@ void testIsPawnOnInitialRank()
    {
       const std::string caseLabel = "isPawnOnInitialRank for white pawns on initial rank";
 
-      for (char file = 'a'; file <= 'h'; ++file)
-         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, Square(file, '2'))),
-                caseLabel);
+      for (const auto& loc :
+           std::array<std::string, 8>{"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"})
+      {
+         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, loc)), caseLabel);
+      }
    }
    {
       const std::string caseLabel = "isPawnOnInitialRank for black pawns on initial rank";
 
-      for (char file = 'a'; file <= 'h'; ++file)
-         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, Square(file, '7'))),
-                caseLabel);
+      for (const auto& loc :
+           std::array<std::string, 8>{"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"})
+      {
+         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, loc)), caseLabel);
+      }
    }
    {
       const std::string caseLabel =
          "isPawnOnInitialRank for black pawns not on initial rank";
 
-      for (char rank : std::vector<char>{'1', '2', '3', '4', '5', '6', '8'})
-         VERIFY(
-            !isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, Square('a', rank))),
-            caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, Square("a2"))),
+             caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, Square("c3"))),
+             caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, Square("g6"))),
+             caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, Square("h8"))),
+             caseLabel);
    }
    {
       const std::string caseLabel =
          "isPawnOnInitialRank for white pawns not on initial rank";
-      for (char rank : std::vector<char>{'1', '3', '4', '5', '6', '7', '8'})
-         VERIFY(
-            !isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, Square('f', rank))),
-            caseLabel);
+
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, Square("f1"))),
+             caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, Square("e3"))),
+             caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, Square("d7"))),
+             caseLabel);
+      VERIFY(!isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, Square("h8"))),
+             caseLabel);
    }
    {
       const std::string caseLabel = "isPawnOnInitialRank for piece that is not a pawn";

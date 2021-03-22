@@ -205,7 +205,7 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 ///////////////////
 
 Piece::Piece(Figure figure, Color color, std::string_view loc)
-: Piece{figure, color, makeSquare(loc)}
+: Piece{figure, color, Square{loc}}
 {
 }
 
@@ -260,8 +260,7 @@ Piece makePiece(std::string_view notation)
    const Figure figure = makeFigure(notation);
    std::size_t idx = figure == Figure::Pawn ? 0 : 1;
    const Color color = makeColor(notation.substr(idx++));
-   const Square loc = makeSquare(notation.substr(idx));
-   return Piece{figure, color, loc};
+   return Piece{figure, color, Square{notation.substr(idx)}};
 }
 
 
@@ -271,8 +270,7 @@ Piece makePiece(std::string_view notation, Color side)
    std::size_t idx = figure == Figure::Pawn ? 0 : 1;
    if (notation[idx] == 'x')
       ++idx;
-   const Square loc = makeSquare(notation.substr(idx));
-   return Piece{figure, side, loc};
+   return Piece{figure, side, Square{notation.substr(idx)}};
 }
 
 
