@@ -19,14 +19,21 @@ static constexpr char PieceDelim[] = {PieceDelimCh};
 
 ///////////////////
 
-Position::Position()
+Position::Position(const std::vector<Piece>& pieces)
+: m_pieces{pieces}, m_score{calcScore()}
 {
 }
 
 
-Position::Position(const std::vector<Piece>& pieces)
-: m_pieces{pieces}, m_score{calcScore()}
+Position::Position(std::string_view notation)
 {
+   const std::vector<std::string> pieceNotations =
+      esl::split(std::string{notation}, PieceDelim);
+
+   std::transform(begin(pieceNotations), end(pieceNotations), std::back_inserter(m_pieces),
+                  [](const std::string& pieceNotation) { return Piece(pieceNotation); });
+
+   m_score = calcScore();
 }
 
 
@@ -101,19 +108,4 @@ float Position::calcScore() const
 {
    esl::Random<float> rnd;
    return rnd.next();
-}
-
-
-///////////////////
-
-Position makePosition(std::string_view notation)
-{
-   const std::vector<std::string> pieceNotations =
-      esl::split(std::string{notation}, PieceDelim);
-
-   std::vector<Piece> pieces;
-   std::transform(begin(pieceNotations), end(pieceNotations), std::back_inserter(pieces),
-                  [](const std::string& pieceNotation) { return Piece(pieceNotation); });
-
-   return Position{pieces};
 }

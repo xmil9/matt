@@ -14,8 +14,9 @@
 class Position
 {
  public:
-   Position();
+   Position() = default;
    explicit Position(const std::vector<Piece>& pieces);
+   explicit Position(std::string_view notation);
 
    float score() const { return m_score; } 
    bool isOccupied(Square loc) const;
@@ -38,8 +39,3 @@ class Position
    Record m_record;
    float m_score = 0.f;
 };
-
-
-///////////////////
-
-Position makePosition(std::string_view notation);

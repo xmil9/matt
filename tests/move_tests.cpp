@@ -165,21 +165,20 @@ void testNotateMove()
    {
       const std::string caseLabel = "notateMove for non-capturing moves";
 
-      VERIFY(notateMove(Piece("Qbd8"), Square("d5"), makePosition("Qbd8")) == "Qd5",
+      VERIFY(notateMove(Piece("Qbd8"), Square("d5"), Position("Qbd8")) == "Qd5",
              caseLabel);
-      VERIFY(notateMove(Piece("Kwe1"), Square("d2"), makePosition("Kwe1")) == "Kd2",
+      VERIFY(notateMove(Piece("Kwe1"), Square("d2"), Position("Kwe1")) == "Kd2",
              caseLabel);
-      VERIFY(notateMove(Piece("bf5"), Square("f4"), makePosition("bf5")) == "f4",
-             caseLabel);
+      VERIFY(notateMove(Piece("bf5"), Square("f4"), Position("bf5")) == "f4", caseLabel);
    }
    {
       const std::string caseLabel = "notateMove for capturing moves";
 
-      VERIFY(notateMove(Piece("Qbd8"), Square("d5"), makePosition("Qbd8 Bwd5")) == "Qxd5",
+      VERIFY(notateMove(Piece("Qbd8"), Square("d5"), Position("Qbd8 Bwd5")) == "Qxd5",
              caseLabel);
-      VERIFY(notateMove(Piece("Kwe1"), Square("d2"), makePosition("Kwe1 bd2")) == "Kxd2",
+      VERIFY(notateMove(Piece("Kwe1"), Square("d2"), Position("Kwe1 bd2")) == "Kxd2",
              caseLabel);
-      VERIFY(notateMove(Piece("bf5"), Square("e4"), makePosition("bf5 Nwe4")) == "fxe4",
+      VERIFY(notateMove(Piece("bf5"), Square("e4"), Position("bf5 Nwe4")) == "fxe4",
              caseLabel);
    }
 }
