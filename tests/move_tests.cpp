@@ -43,6 +43,23 @@ void testMoveFullCtor()
 }
 
 
+void testMoveCtorWithPosition()
+{
+   {
+      const std::string caseLabel = "Move ctor with position";
+
+      const Piece piece("Bwe5");
+      const Square to("c3");
+      const Position pos{std::vector<Piece>{piece}};
+      const Move m{piece, to, pos};
+      VERIFY(m.piece() == piece, caseLabel);
+      VERIFY(m.from() == Square("e5"), caseLabel);
+      VERIFY(m.to() == to, caseLabel);
+      VERIFY(m.notate() == "Bc3", caseLabel);
+   }
+}
+
+
 void testMovePieceAccessor()
 {
    // Trivial - skip.
@@ -176,6 +193,7 @@ void testMove()
 {
    testMoveDefaultCtor();
    testMoveFullCtor();
+   testMoveCtorWithPosition();
    testMovePieceAccessor();
    testMoveFromAccessor();
    testMoveToAccessor();

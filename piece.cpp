@@ -17,12 +17,6 @@ namespace
 {
 ///////////////////
 
-inline Move makeMove(const Piece& piece, Square to, const Position& pos)
-{
-   return Move{piece, to, notateMove(piece, to, pos)};
-}
-
-
 // Adds move to a given square to a collection if the move is possible.
 // Returns whether the destination square was occupied by a piece.
 bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
@@ -34,7 +28,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
       // Open square:
       // - can move to it
       // - further squares in this direction are accessible
-      moves.push_back(makeMove(piece, to, pos));
+      moves.push_back(Move(piece, to, pos));
    }
    else
    {
@@ -42,7 +36,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
       // - can move to it if occupied by other color (capture unless piece is a pawn)
       // - further squares in this direction are not accessible
       if (occupant->color() != piece.color() && !piece.isFigure(Figure::Pawn))
-         moves.push_back(makeMove(piece, to, pos));
+         moves.push_back(Move(piece, to, pos));
    }
 
    return occupant.has_value();
@@ -180,7 +174,7 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
       if (const auto target = pos[*to];
           target.has_value() && pawn.color() != target->color())
       {
-         moves.push_back(makeMove(pawn, *to, pos));
+         moves.push_back(Move(pawn, *to, pos));
       }
    }
 
@@ -190,7 +184,7 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
       if (const auto target = pos[*to];
           target.has_value() && pawn.color() != target->color())
       {
-         moves.push_back(makeMove(pawn, *to, pos));
+         moves.push_back(Move(pawn, *to, pos));
       }
    }
 

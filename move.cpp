@@ -8,6 +8,12 @@
 
 ///////////////////
 
+Move::Move(const Piece& piece, Square to, const Position& pos)
+   : Move{piece, to, notateMove(piece, to, pos)}
+{
+}
+
+
 std::string notateMove(const Piece& piece, Square to, const Position& pos)
 {
    // todo - check for ambiguities

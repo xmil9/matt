@@ -17,6 +17,7 @@ class Move
  public:
    Move() = default;
    Move(const Piece& piece, Square to, std::string notation);
+   Move(const Piece& piece, Square to, const Position& pos);
 
    const Piece& piece() const { return m_piece; }
    Square from() const { return m_piece.location(); }
