@@ -157,6 +157,52 @@ void testPieceCtorWithLocationString()
 }
 
 
+void testPieceCtorWithNotation()
+{
+   {
+      const std::string caseLabel = "Piece ctor with notation";
+
+      VERIFY(Piece("Bbg4") == Piece(Figure::Bishop, Color::Black, "g4"), caseLabel);
+      VERIFY(Piece("Kwh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
+      VERIFY(Piece("wh8") == Piece(Figure::Pawn, Color::White, "h8"), caseLabel);
+      VERIFY(Piece("bc4") == Piece(Figure::Pawn, Color::Black, "c4"), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Piece ctor with notation for invalid notation";
+
+      VERIFY(Piece("Tbg4") == Piece(Figure::Pawn, Color::White, Square()), caseLabel);
+      VERIFY(Piece("Kqh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
+      VERIFY(Piece("Rwr0") == Piece(Figure::Rook, Color::White, Square()), caseLabel);
+   }
+}
+
+
+void testPieceCtorWithNotationAndColor()
+{
+   {
+      const std::string caseLabel = "Piece ctor with notation and color";
+
+      VERIFY(Piece("Bg4", Color::Black) == Piece(Figure::Bishop, Color::Black, "g4"),
+             caseLabel);
+      VERIFY(Piece("Kh8", Color::White) == Piece(Figure::King, Color::White, "h8"),
+             caseLabel);
+      VERIFY(Piece("h8", Color::White) == Piece(Figure::Pawn, Color::White, "h8"),
+             caseLabel);
+      VERIFY(Piece("c4", Color::Black) == Piece(Figure::Pawn, Color::Black, "c4"),
+             caseLabel);
+   }
+   {
+      const std::string caseLabel =
+         "Piece ctor with notation and color for invalid notation";
+
+      VERIFY(Piece("Tg4", Color::White) == Piece(Figure::Pawn, Color::White, Square()),
+             caseLabel);
+      VERIFY(Piece("Rr0", Color::Black) == Piece(Figure::Rook, Color::Black, Square()),
+             caseLabel);
+   }
+}
+
+
 void testPieceColor()
 {
    {
@@ -359,7 +405,7 @@ void testPieceNextMovesForKing()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -383,11 +429,11 @@ void testPieceNextMovesForKing()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -412,11 +458,11 @@ void testPieceNextMovesForKing()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -462,7 +508,7 @@ void testPieceNextMovesForQueen()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -500,11 +546,11 @@ void testPieceNextMovesForQueen()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -542,11 +588,11 @@ void testPieceNextMovesForQueen()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -600,7 +646,7 @@ void testPieceNextMovesForRook()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -633,11 +679,11 @@ void testPieceNextMovesForRook()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -671,11 +717,11 @@ void testPieceNextMovesForRook()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -712,7 +758,7 @@ void testPieceNextMovesForBishop()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -739,11 +785,11 @@ void testPieceNextMovesForBishop()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -772,11 +818,11 @@ void testPieceNextMovesForBishop()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -812,7 +858,7 @@ void testPieceNextMovesForKnight()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -839,11 +885,11 @@ void testPieceNextMovesForKnight()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -870,11 +916,11 @@ void testPieceNextMovesForKnight()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -902,7 +948,7 @@ void testPieceNextMovesForPawn()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          Position pos({piece});
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -928,11 +974,11 @@ void testPieceNextMovesForPawn()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -964,11 +1010,11 @@ void testPieceNextMovesForPawn()
       };
       for (const auto& test : testCases)
       {
-         Piece piece = makePiece(test.piece);
+         Piece piece(test.piece);
          std::vector<Piece> all{piece};
          std::transform(begin(test.otherPieces), end(test.otherPieces),
                         std::back_inserter(all),
-                        [](const std::string& notation) { return makePiece(notation); });
+                        [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
          VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
                 caseLabel);
@@ -1121,55 +1167,6 @@ void testSwapPieces()
 }
 
 
-void testMakePieceWithColor()
-{
-   {
-      const std::string caseLabel = "makePiece with color in notation";
-
-      VERIFY(makePiece("Bbg4") == Piece(Figure::Bishop, Color::Black, "g4"), caseLabel);
-      VERIFY(makePiece("Kwh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
-      VERIFY(makePiece("wh8") == Piece(Figure::Pawn, Color::White, "h8"), caseLabel);
-      VERIFY(makePiece("bc4") == Piece(Figure::Pawn, Color::Black, "c4"), caseLabel);
-   }
-   {
-      const std::string caseLabel =
-         "makePiece with color in notation for invalid notation";
-
-      VERIFY(makePiece("Tbg4") == Piece(Figure::Pawn, Color::White, Square()), caseLabel);
-      VERIFY(makePiece("Kqh8") == Piece(Figure::King, Color::White, "h8"), caseLabel);
-      VERIFY(makePiece("Rwr0") == Piece(Figure::Rook, Color::White, Square()), caseLabel);
-   }
-}
-
-
-void testMakePieceWithoutColor()
-{
-   {
-      const std::string caseLabel = "makePiece without color in notation";
-
-      VERIFY(makePiece("Bg4", Color::Black) == Piece(Figure::Bishop, Color::Black, "g4"),
-             caseLabel);
-      VERIFY(makePiece("Kh8", Color::White) == Piece(Figure::King, Color::White, "h8"),
-             caseLabel);
-      VERIFY(makePiece("h8", Color::White) == Piece(Figure::Pawn, Color::White, "h8"),
-             caseLabel);
-      VERIFY(makePiece("c4", Color::Black) == Piece(Figure::Pawn, Color::Black, "c4"),
-             caseLabel);
-   }
-   {
-      const std::string caseLabel =
-         "makePiece without color in notation for invalid notation";
-
-      VERIFY(makePiece("Tg4", Color::White) ==
-                Piece(Figure::Pawn, Color::White, Square()),
-             caseLabel);
-      VERIFY(makePiece("Rr0", Color::Black) ==
-                Piece(Figure::Rook, Color::Black, Square()),
-             caseLabel);
-   }
-}
-
-
 void testIsPawnOnInitialRank()
 {
    {
@@ -1263,6 +1260,8 @@ void testPiece()
    testPieceDefaultCtor();
    testPieceCtor();
    testPieceCtorWithLocationString();
+   testPieceCtorWithNotation();
+   testPieceCtorWithNotationAndColor();
    testPieceColor();
    testPieceLocation();
    testPieceIsFigure();
@@ -1284,8 +1283,6 @@ void testPiece()
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
    testSwapPieces();
-   testMakePieceWithColor();
-   testMakePieceWithoutColor();
 
    testIsPawnOnInitialRank();
    testPawnDirection();

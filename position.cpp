@@ -25,7 +25,7 @@ Position::Position()
 
 
 Position::Position(const std::vector<Piece>& pieces)
-   : m_pieces{pieces}, m_score{calcScore()}
+: m_pieces{pieces}, m_score{calcScore()}
 {
 }
 
@@ -112,9 +112,8 @@ Position makePosition(std::string_view notation)
       esl::split(std::string{notation}, PieceDelim);
 
    std::vector<Piece> pieces;
-   std::transform(
-      begin(pieceNotations), end(pieceNotations), std::back_inserter(pieces),
-      [](const std::string& pieceNotation) { return makePiece(pieceNotation); });
+   std::transform(begin(pieceNotations), end(pieceNotations), std::back_inserter(pieces),
+                  [](const std::string& pieceNotation) { return Piece(pieceNotation); });
 
    return Position{pieces};
 }

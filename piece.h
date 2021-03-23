@@ -127,6 +127,8 @@ class Piece
    Piece() = default;
    Piece(Figure figure, Color color, Square loc);
    Piece(Figure figure, Color color, std::string_view loc);
+   Piece(std::string_view notation);
+   Piece(std::string_view notation, Color side);
 
    Color color() const { return m_color; }
    Square location() const { return m_loc; }
@@ -198,9 +200,6 @@ inline bool operator==(const std::optional<Piece>& a, const Piece& b)
 
 
 ///////////////////
-
-Piece makePiece(std::string_view notation);
-Piece makePiece(std::string_view notation, Color side);
 
 bool isPawnOnInitialRank(const Piece& pawn);
 Offset pawnDirection(const Piece& pawn);

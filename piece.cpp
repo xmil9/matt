@@ -210,6 +210,26 @@ Piece::Piece(Figure figure, Color color, std::string_view loc)
 }
 
 
+Piece::Piece(std::string_view notation)
+{
+   m_figure = makeFigure(notation);
+   std::size_t idx = m_figure == Figure::Pawn ? 0 : 1;
+   m_color = makeColor(notation.substr(idx++));
+   m_loc = Square{notation.substr(idx)};
+}
+
+
+Piece::Piece(std::string_view notation, Color side)
+{
+   m_color = side;
+   m_figure = makeFigure(notation);
+   std::size_t idx = m_figure == Figure::Pawn ? 0 : 1;
+   if (notation[idx] == 'x')
+      ++idx;
+   m_loc = Square{notation.substr(idx)};
+}
+
+
 std::vector<Move> Piece::nextMoves(const Position& pos) const
 {
    switch (m_figure)
@@ -252,25 +272,6 @@ std::string Piece::notate(Notation format) const
    if (format == Notation::FL || format == Notation::FCL)
       notation += m_loc.notate();
    return notation;
-}
-
-
-Piece makePiece(std::string_view notation)
-{
-   const Figure figure = makeFigure(notation);
-   std::size_t idx = figure == Figure::Pawn ? 0 : 1;
-   const Color color = makeColor(notation.substr(idx++));
-   return Piece{figure, color, Square{notation.substr(idx)}};
-}
-
-
-Piece makePiece(std::string_view notation, Color side)
-{
-   const Figure figure = makeFigure(notation);
-   std::size_t idx = figure == Figure::Pawn ? 0 : 1;
-   if (notation[idx] == 'x')
-      ++idx;
-   return Piece{figure, side, Square{notation.substr(idx)}};
 }
 
 
