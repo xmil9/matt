@@ -126,7 +126,7 @@ void testPieceDefaultCtor()
       const Piece p;
       VERIFY(p.isFigure(Figure::Pawn), caseLabel);
       VERIFY(p.color() == Color::White, caseLabel);
-      VERIFY(p.location() == Square(), caseLabel);
+      VERIFY(p.coord() == Square(), caseLabel);
    }
 }
 
@@ -139,7 +139,7 @@ void testPieceCtor()
       const Piece p{Figure::King, Color::Black, Square{"c5"}};
       VERIFY(p.isFigure(Figure::King), caseLabel);
       VERIFY(p.color() == Color::Black, caseLabel);
-      VERIFY(p.location() == Square("c5"), caseLabel);
+      VERIFY(p.coord() == Square("c5"), caseLabel);
    }
 }
 
@@ -147,12 +147,12 @@ void testPieceCtor()
 void testPieceCtorWithLocationString()
 {
    {
-      const std::string caseLabel = "Piece ctor with location string";
+      const std::string caseLabel = "Piece ctor with coordinate string";
 
       const Piece p{Figure::King, Color::Black, "c5"};
       VERIFY(p.isFigure(Figure::King), caseLabel);
       VERIFY(p.color() == Color::Black, caseLabel);
-      VERIFY(p.location() == Square("c5"), caseLabel);
+      VERIFY(p.coord() == Square("c5"), caseLabel);
    }
 }
 
@@ -214,15 +214,13 @@ void testPieceColor()
 }
 
 
-void testPieceLocation()
+void testPieceCoordinate()
 {
    {
-      const std::string caseLabel = "Piece::location";
+      const std::string caseLabel = "Piece::coord";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").location() == Square("f4"),
-             caseLabel);
-      VERIFY(Piece(Figure::Pawn, Color::White, "a1").location() == Square("a1"),
-             caseLabel);
+      VERIFY(Piece(Figure::King, Color::Black, "f4").coord() == Square("f4"), caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "a1").coord() == Square("a1"), caseLabel);
    }
 }
 
@@ -259,7 +257,7 @@ void testPieceNotate()
              caseLabel);
    }
    {
-      const std::string caseLabel = "Piece::notate for figure and location";
+      const std::string caseLabel = "Piece::notate for figure and coordinate";
 
       VERIFY(Piece(Figure::King, Color::Black, "f4").notate(Piece::Notation::FL) == "Kf4",
              caseLabel);
@@ -296,7 +294,7 @@ void testPieceNotate()
              caseLabel);
    }
    {
-      const std::string caseLabel = "Piece::notate for figure, color, and location";
+      const std::string caseLabel = "Piece::notate for figure, color, and coordinate";
 
       VERIFY(Piece(Figure::King, Color::Black, "f4").notate(Piece::Notation::FCL) ==
                 "Kbf4",
@@ -325,22 +323,21 @@ void testPieceMove()
    {
       const std::string caseLabel = "Piece::move";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").move(Square("g3")).location() ==
+      VERIFY(Piece(Figure::King, Color::Black, "f4").move("g3"_sq).coord() ==
                 Square("g3"),
              caseLabel);
    }
    {
       const std::string caseLabel = "Piece::move to invalid field";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").move(Square("k3")).location() ==
-                Square(),
+      VERIFY(Piece(Figure::King, Color::Black, "f4").move("k3"_sq).coord() == Square(),
              caseLabel);
    }
    {
       const std::string caseLabel = "Piece::move that is invalid for piece";
 
       // No checking for illegal moves.
-      VERIFY(Piece(Figure::King, Color::Black, "f4").move(Square("a1")).location() ==
+      VERIFY(Piece(Figure::King, Color::Black, "f4").move("a1"_sq).coord() ==
                 Square("a1"),
              caseLabel);
    }
@@ -358,8 +355,8 @@ bool verifyNextMoves(const std::vector<Move>& moves, const Piece& piece,
    expectedMoves.reserve(expectedLocations.size());
    std::transform(begin(expectedLocations), end(expectedLocations),
                   std::back_inserter(expectedMoves),
-                  [&piece, &pos](const std::string& loc) {
-                     const Square to{loc};
+                  [&piece, &pos](const std::string& coord) {
+                     const Square to{coord};
                      return Move{piece, to, notateMove(piece, to, pos)};
                   });
 
@@ -1159,10 +1156,10 @@ void testSwapPieces()
       swap(a, b);
       VERIFY(a.isFigure(Figure::Rook), caseLabel);
       VERIFY(a.color() == Color::White, caseLabel);
-      VERIFY(a.location() == Square("c6"), caseLabel);
+      VERIFY(a.coord() == "c6"_sq, caseLabel);
       VERIFY(b.isFigure(Figure::Bishop), caseLabel);
       VERIFY(b.color() == Color::Black, caseLabel);
-      VERIFY(b.location() == Square("g4"), caseLabel);
+      VERIFY(b.coord() == "g4"_sq, caseLabel);
    }
 }
 
@@ -1172,19 +1169,19 @@ void testIsPawnOnInitialRank()
    {
       const std::string caseLabel = "isPawnOnInitialRank for white pawns on initial rank";
 
-      for (const auto& loc :
+      for (const auto& coord :
            std::array<std::string, 8>{"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"})
       {
-         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, loc)), caseLabel);
+         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::White, coord)), caseLabel);
       }
    }
    {
       const std::string caseLabel = "isPawnOnInitialRank for black pawns on initial rank";
 
-      for (const auto& loc :
+      for (const auto& coord :
            std::array<std::string, 8>{"a7", "b7", "c7", "d7", "e7", "f7", "g7", "h7"})
       {
-         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, loc)), caseLabel);
+         VERIFY(isPawnOnInitialRank(Piece(Figure::Pawn, Color::Black, coord)), caseLabel);
       }
    }
    {
@@ -1263,7 +1260,7 @@ void testPiece()
    testPieceCtorWithNotation();
    testPieceCtorWithNotationAndColor();
    testPieceColor();
-   testPieceLocation();
+   testPieceCoordinate();
    testPieceIsFigure();
    testPieceNotate();
    testPieceMove();

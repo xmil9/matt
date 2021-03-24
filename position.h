@@ -21,8 +21,8 @@ class Position
    explicit Position(std::string_view notation);
 
    float score() const { return m_score; } 
-   bool isOccupiedBy(Square loc, Color bySide) const;
-   std::optional<Piece> operator[](Square loc) const;
+   bool isOccupiedBy(Square coord, Color bySide) const;
+   std::optional<Piece> operator[](Square coord) const;
    std::vector<Piece> pieces(Color side) const;
    std::string notate() const;
    Position makeMove(const Move& move) const;
@@ -31,8 +31,8 @@ class Position
    using Iter = std::vector<Piece>::iterator;
    using Citer = std::vector<Piece>::const_iterator;
 
-   Iter at(Square loc);
-   Citer at(Square loc) const;
+   Iter at(Square coord);
+   Citer at(Square coord) const;
    float calcScore() const;
 
  private:

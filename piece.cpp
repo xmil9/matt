@@ -47,7 +47,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
 void collectMovesInDirection(const Piece& piece, const Position& pos, Offset dir,
                              std::vector<Move>& moves)
 {
-   std::optional<Square> to = piece.location() + dir;
+   std::optional<Square> to = piece.coord() + dir;
    while (to.has_value())
    {
       if (collectMoveTo(piece, *to, pos, moves))
@@ -76,7 +76,7 @@ void collectMovesTo(const Piece& piece, const Position& pos, OffsetIter first,
                     OffsetIter last, std::vector<Move>& moves)
 {
    std::for_each(first, last, [&](const auto& off) {
-      std::optional<Square> to = piece.location() + off;
+      std::optional<Square> to = piece.coord() + off;
       if (to.has_value())
          collectMoveTo(piece, *to, pos, moves);
    });
@@ -87,7 +87,7 @@ void collectMovesTo(const Piece& piece, const Position& pos, OffsetIter first,
 
 std::vector<Move> kingMoves(const Piece& king, const Position& pos)
 {
-   assert(pos[king.location()] == king);
+   assert(pos[king.coord()] == king);
 
    static const std::array<Offset, 8> Offsets{Offset{1, 1}, {1, 0},  {1, -1}, {0, 1},
                                               {0, -1},      {-1, 1}, {-1, 0}, {-1, -1}};
@@ -101,7 +101,7 @@ std::vector<Move> kingMoves(const Piece& king, const Position& pos)
 
 std::vector<Move> queenMoves(const Piece& queen, const Position& pos)
 {
-   assert(pos[queen.location()] == queen);
+   assert(pos[queen.coord()] == queen);
 
    static const std::array<Offset, 8> Directions{
       Offset{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
@@ -114,7 +114,7 @@ std::vector<Move> queenMoves(const Piece& queen, const Position& pos)
 
 std::vector<Move> rookMoves(const Piece& rook, const Position& pos)
 {
-   assert(pos[rook.location()] == rook);
+   assert(pos[rook.coord()] == rook);
 
    static const std::array<Offset, 4> Directions{Offset{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 
@@ -137,7 +137,7 @@ std::vector<Move> bishopMoves(const Piece& bishop, const Position& pos)
 
 std::vector<Move> knightMoves(const Piece& knight, const Position& pos)
 {
-   assert(pos[knight.location()] == knight);
+   assert(pos[knight.coord()] == knight);
 
    static const std::array<Offset, 8> Offsets{Offset{2, 1}, {2, -1}, {-2, 1}, {-2, -1},
                                               {1, 2},       {-1, 2}, {1, -2}, {-1, -2}};
@@ -150,13 +150,13 @@ std::vector<Move> knightMoves(const Piece& knight, const Position& pos)
 
 std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 {
-   assert(pos[pawn.location()] == pawn);
+   assert(pos[pawn.coord()] == pawn);
 
    std::vector<Move> moves;
    const Offset dir = pawnDirection(pawn);
 
    // Move one square forward.
-   if (const auto to = pawn.location() + dir; to.has_value())
+   if (const auto to = pawn.coord() + dir; to.has_value())
       collectMoveTo(pawn, *to, pos, moves);
 
    // Move two squares forward from starting square.
@@ -164,12 +164,12 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
        // Only if moving one square forward succeeded.
        !moves.empty())
    {
-      if (const auto to = pawn.location() + 2 * dir; to.has_value())
+      if (const auto to = pawn.coord() + 2 * dir; to.has_value())
          collectMoveTo(pawn, *to, pos, moves);
    }
 
    // Capture diagonally on lower file.
-   if (const auto to = pawn.location() + dir + Offset{-1, 0}; to.has_value())
+   if (const auto to = pawn.coord() + dir + Offset{-1, 0}; to.has_value())
    {
       if (const auto target = pos[*to];
           target.has_value() && pawn.color() != target->color())
@@ -179,7 +179,7 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
    }
 
    // Capture diagonally on higher file.
-   if (const auto to = pawn.location() + dir + Offset{1, 0}; to.has_value())
+   if (const auto to = pawn.coord() + dir + Offset{1, 0}; to.has_value())
    {
       if (const auto target = pos[*to];
           target.has_value() && pawn.color() != target->color())
@@ -198,8 +198,8 @@ std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 
 ///////////////////
 
-Piece::Piece(Figure figure, Color color, std::string_view loc)
-: Piece{figure, color, Square{loc}}
+Piece::Piece(Figure figure, Color color, std::string_view coord)
+: Piece{figure, color, Square{coord}}
 {
 }
 
@@ -209,7 +209,7 @@ Piece::Piece(std::string_view notation)
    m_figure = makeFigure(notation);
    std::size_t idx = m_figure == Figure::Pawn ? 0 : 1;
    m_color = makeColor(notation.substr(idx++));
-   m_loc = Square{notation.substr(idx)};
+   m_coord = Square{notation.substr(idx)};
 }
 
 
@@ -220,7 +220,7 @@ Piece::Piece(std::string_view notation, Color side)
    std::size_t idx = m_figure == Figure::Pawn ? 0 : 1;
    if (notation[idx] == 'x')
       ++idx;
-   m_loc = Square{notation.substr(idx)};
+   m_coord = Square{notation.substr(idx)};
 }
 
 
@@ -264,7 +264,7 @@ std::string Piece::notate(Notation format) const
    if (format == Notation::FC || format == Notation::FCL)
       notation += notateColor(m_color);
    if (format == Notation::FL || format == Notation::FCL)
-      notation += m_loc.notate();
+      notation += m_coord.notate();
    return notation;
 }
 
@@ -277,7 +277,7 @@ bool isPawnOnInitialRank(const Piece& pawn)
       return false;
 
    const char initialRank = pawn.color() == Color::White ? '2' : '7';
-   return pawn.location().rank() == initialRank;
+   return pawn.coord().rank() == initialRank;
 }
 
 

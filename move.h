@@ -20,7 +20,7 @@ class Move
    Move(const Piece& piece, Square to, const Position& pos);
 
    const Piece& piece() const { return m_piece; }
-   Square from() const { return m_piece.location(); }
+   Square from() const { return m_piece.coord(); }
    Square to() const { return m_to; }
    const std::string& notate() const { return m_notation; }
    Piece movedPiece() const { return m_piece.move(m_to); }

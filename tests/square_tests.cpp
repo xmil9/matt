@@ -30,9 +30,9 @@ void testSquareCharCtor()
       for (char file = 'a'; file <= 'h'; ++file)
          for (char rank = '1'; rank <= '8'; ++rank)
          {
-            std::string loc(1, file);
-            loc += rank;
-            VERIFY(Square(loc).operator bool(), caseLabel);
+            std::string coord(1, file);
+            coord += rank;
+            VERIFY(Square(coord).operator bool(), caseLabel);
          }
    }
 }

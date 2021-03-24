@@ -125,13 +125,13 @@ class Piece
 {
  public:
    Piece() = default;
-   Piece(Figure figure, Color color, Square loc);
-   Piece(Figure figure, Color color, std::string_view loc);
+   Piece(Figure figure, Color color, Square coord);
+   Piece(Figure figure, Color color, std::string_view coord);
    Piece(std::string_view notation);
    Piece(std::string_view notation, Color side);
 
    Color color() const { return m_color; }
-   Square location() const { return m_loc; }
+   Square coord() const { return m_coord; }
    bool isFigure(Figure f) const { return m_figure == f; }
    // Does not prevent moves that are illegal for the piece.
    Piece move(Square to) const;
@@ -145,13 +145,13 @@ class Piece
       using std::swap;
       swap(a.m_figure, b.m_figure);
       swap(a.m_color, b.m_color);
-      swap(a.m_loc, b.m_loc);
+      swap(a.m_coord, b.m_coord);
    }
 
-    // Notation formats:
-    // F = figure
-    // C = color
-    // L = location
+   // Notation formats:
+   // F = figure
+   // C = color
+   // L = location coordinate
    enum class Notation
    {
       F,
@@ -164,12 +164,12 @@ class Piece
  private:
    Figure m_figure = Figure::Pawn;
    Color m_color = Color::White;
-   Square m_loc;
+   Square m_coord;
 };
 
 
-inline Piece::Piece(Figure figure, Color color, Square loc)
-: m_figure{figure}, m_color{color}, m_loc{loc}
+inline Piece::Piece(Figure figure, Color color, Square coord)
+: m_figure{figure}, m_color{color}, m_coord{coord}
 {
 }
 
@@ -180,7 +180,8 @@ inline Piece Piece::move(Square to) const
 
 inline bool Piece::operator==(const Piece& other) const
 {
-   return m_figure == other.m_figure && m_color == other.m_color && m_loc == other.m_loc;
+   return m_figure == other.m_figure && m_color == other.m_color &&
+          m_coord == other.m_coord;
 }
 
 inline bool operator!=(const Piece& a, const Piece& b)

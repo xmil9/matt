@@ -38,16 +38,16 @@ Position::Position(std::string_view notation)
 }
 
 
-bool Position::isOccupiedBy(Square loc, Color byColor) const
+bool Position::isOccupiedBy(Square coord, Color byColor) const
 {
-   const auto it = at(loc);
+   const auto it = at(coord);
    return it != end(m_pieces) && it->color() == byColor;
 }
 
 
-std::optional<Piece> Position::operator[](Square loc) const
+std::optional<Piece> Position::operator[](Square coord) const
 {
-   if (const auto it = at(loc); it != end(m_pieces))
+   if (const auto it = at(coord); it != end(m_pieces))
       return *it;
    return std::nullopt;
 }
@@ -81,24 +81,24 @@ Position Position::makeMove(const Move& move) const
    std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(nextPieces),
                 [&movingPiece, &to](const Piece& elem) {
                    // Skip moving piece and piece at moved-to coordinate.
-                   return elem != movingPiece && elem.location() != to;
+                   return elem != movingPiece && elem.coord() != to;
                 });
    nextPieces.push_back(move.movedPiece());
    return Position{nextPieces};
 }
 
 
-Position::Iter Position::at(Square loc)
+Position::Iter Position::at(Square coord)
 {
    return std::find_if(begin(m_pieces), end(m_pieces),
-                       [&loc](const Piece& piece) { return piece.location() == loc; });
+                       [&coord](const Piece& piece) { return piece.coord() == coord; });
 }
 
 
-Position::Citer Position::at(Square loc) const
+Position::Citer Position::at(Square coord) const
 {
    return std::find_if(begin(m_pieces), end(m_pieces),
-                       [&loc](const Piece& piece) { return piece.location() == loc; });
+                       [&coord](const Piece& piece) { return piece.coord() == coord; });
 }
 
 
