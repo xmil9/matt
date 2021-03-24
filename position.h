@@ -13,13 +13,14 @@
 
 class Position
 {
+   friend bool operator==(const Position&, const Position&);
+
  public:
    Position() = default;
    explicit Position(const std::vector<Piece>& pieces);
    explicit Position(std::string_view notation);
 
    float score() const { return m_score; } 
-   bool isOccupied(Square loc) const;
    bool isOccupiedBy(Square loc, Color bySide) const;
    std::optional<Piece> operator[](Square loc) const;
    std::vector<Piece> pieces(Color side) const;
@@ -39,3 +40,13 @@ class Position
    Record m_record;
    float m_score = 0.f;
 };
+
+
+///////////////////
+
+bool operator==(const Position& a, const Position& b);
+
+inline bool operator!=(const Position& a, const Position& b)
+{
+   return !(a == b);
+}

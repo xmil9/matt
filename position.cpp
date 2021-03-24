@@ -30,16 +30,11 @@ Position::Position(std::string_view notation)
    const std::vector<std::string> pieceNotations =
       esl::split(std::string{notation}, PieceDelim);
 
-   std::transform(begin(pieceNotations), end(pieceNotations), std::back_inserter(m_pieces),
+   std::transform(begin(pieceNotations), end(pieceNotations),
+                  std::back_inserter(m_pieces),
                   [](const std::string& pieceNotation) { return Piece(pieceNotation); });
 
    m_score = calcScore();
-}
-
-
-bool Position::isOccupied(Square loc) const
-{
-   return (*this)[loc].has_value();
 }
 
 
@@ -52,8 +47,7 @@ bool Position::isOccupiedBy(Square loc, Color byColor) const
 
 std::optional<Piece> Position::operator[](Square loc) const
 {
-   const auto it = at(loc);
-   if (it != end(m_pieces))
+   if (const auto it = at(loc); it != end(m_pieces))
       return *it;
    return std::nullopt;
 }
@@ -80,11 +74,15 @@ std::string Position::notate() const
 
 Position Position::makeMove(const Move& move) const
 {
-   Piece movingPiece = move.piece();
+   const Piece movingPiece = move.piece();
+   const Square to = move.to();
 
    std::vector<Piece> nextPieces;
    std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(nextPieces),
-                [&movingPiece](const Piece& elem) { return elem != movingPiece; });
+                [&movingPiece, &to](const Piece& elem) {
+                   // Skip moving piece and piece at moved-to coordinate.
+                   return elem != movingPiece && elem.location() != to;
+                });
    nextPieces.push_back(move.movedPiece());
    return Position{nextPieces};
 }
@@ -108,4 +106,19 @@ float Position::calcScore() const
 {
    esl::Random<float> rnd;
    return rnd.next();
+}
+
+
+///////////////////
+
+bool operator==(const Position& a, const Position& b)
+{
+   if (a.m_pieces.size() != b.m_pieces.size())
+      return false;
+
+   for (const Piece& piece : a.m_pieces)
+      if (std::find(begin(b.m_pieces), end(b.m_pieces), piece) == end(b.m_pieces))
+         return false;
+
+   return true;
 }
