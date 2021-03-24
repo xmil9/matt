@@ -239,6 +239,20 @@ void testSquareInequality()
 }
 
 
+void testSquareLiteral()
+{
+   {
+      const std::string caseLabel = "Square literal";
+
+      VERIFY("e3"_sq == Square("e3"), caseLabel);
+      VERIFY(""_sq == Square(), caseLabel);
+      VERIFY("e3zzzzz"_sq == Square("e3"), caseLabel);
+      VERIFY("ez"_sq == Square(), caseLabel);
+      VERIFY("z2"_sq == Square(), caseLabel);
+   }
+}
+
+
 void testOffsetDefaultCtor()
 {
    {
@@ -447,6 +461,7 @@ void testSquare()
    testSwapSquares();
    testSquareEquality();
    testSquareInequality();
+   testSquareLiteral();
 
    testOffsetDefaultCtor();
    testOffsetIntegerCtor();

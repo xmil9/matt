@@ -36,8 +36,8 @@ void testPositionPiecesCtor()
       const Position pos{pieces};
       VERIFY(pos.pieces(Color::Black).size() == 1, caseLabel);
       VERIFY(pos.pieces(Color::White).size() == 1, caseLabel);
-      VERIFY(pos[Square("e1")] == Piece{"Kwe1"}, caseLabel);
-      VERIFY(pos[Square("e8")] == Piece{"Kbe8"}, caseLabel);
+      VERIFY(pos["e1"_sq] == Piece{"Kwe1"}, caseLabel);
+      VERIFY(pos["e8"_sq] == Piece{"Kbe8"}, caseLabel);
    }
 }
 
@@ -68,17 +68,17 @@ void testPositionIsOccupiedBy()
       const std::string caseLabel = "Position::isOccupiedBy for occupied square";
 
       const Position pos{"Kwe1 Kbe8"};
-      VERIFY(pos.isOccupiedBy(Square("e1"), Color::White), caseLabel);
-      VERIFY(!pos.isOccupiedBy(Square("e1"), Color::Black), caseLabel);
-      VERIFY(pos.isOccupiedBy(Square("e8"), Color::Black), caseLabel);
-      VERIFY(!pos.isOccupiedBy(Square("e8"), Color::White), caseLabel);
+      VERIFY(pos.isOccupiedBy("e1"_sq, Color::White), caseLabel);
+      VERIFY(!pos.isOccupiedBy("e1"_sq, Color::Black), caseLabel);
+      VERIFY(pos.isOccupiedBy("e8"_sq, Color::Black), caseLabel);
+      VERIFY(!pos.isOccupiedBy("e8"_sq, Color::White), caseLabel);
    }
    {
       const std::string caseLabel = "Position::isOccupiedBy for unoccupied square";
 
       const Position pos{"Kwe1 Kbe8"};
-      VERIFY(!pos.isOccupiedBy(Square("a1"), Color::White), caseLabel);
-      VERIFY(!pos.isOccupiedBy(Square("g6"), Color::Black), caseLabel);
+      VERIFY(!pos.isOccupiedBy("a1"_sq, Color::White), caseLabel);
+      VERIFY(!pos.isOccupiedBy("g6"_sq, Color::Black), caseLabel);
    }
 }
 
@@ -89,15 +89,15 @@ void testPositionIndexOperator()
       const std::string caseLabel = "Position::operator[] for occupied square";
 
       const Position pos{"Kwe1 Kbe8"};
-      VERIFY(pos[Square("e1")] == Piece{"Kwe1"}, caseLabel);
-      VERIFY(pos[Square("e8")] == Piece{"Kbe8"}, caseLabel);
+      VERIFY(pos["e1"_sq] == Piece{"Kwe1"}, caseLabel);
+      VERIFY(pos["e8"_sq] == Piece{"Kbe8"}, caseLabel);
    }
    {
       const std::string caseLabel = "Position::operator[] for unoccupied square";
 
       const Position pos{"Kwe1 Kbe8"};
-      VERIFY(pos[Square("a1")] == std::nullopt, caseLabel);
-      VERIFY(pos[Square("g5")] == std::nullopt, caseLabel);
+      VERIFY(pos["a1"_sq] == std::nullopt, caseLabel);
+      VERIFY(pos["g5"_sq] == std::nullopt, caseLabel);
    }
 }
 
@@ -160,10 +160,10 @@ void testPositionMakeMove()
       const std::string caseLabel = "Position::makeMove for non-capturing move";
 
       const Position pos("Kwe1 wg2 Kbe8 Bbf8");
-      VERIFY(pos.makeMove(Move(Piece("wg2"), Square("g3"), pos)) ==
+      VERIFY(pos.makeMove(Move(Piece("wg2"), "g3"_sq, pos)) ==
                 Position("Kwe1 wg3 Kbe8 Bbf8"),
              caseLabel);
-      VERIFY(pos.makeMove(Move(Piece("Kbe8"), Square("d7"), pos)) ==
+      VERIFY(pos.makeMove(Move(Piece("Kbe8"), "d7"_sq, pos)) ==
                 Position("Kwe1 wg2 Kbd7 Bbf8"),
              caseLabel);
    }
@@ -171,10 +171,9 @@ void testPositionMakeMove()
       const std::string caseLabel = "Position::makeMove for capturing move";
 
       const Position pos("Kwe1 wg2 Kbe8 Bbf3");
-      VERIFY(pos.makeMove(Move(Piece("wg2"), Square("f3"), pos)) ==
-                Position("Kwe1 wf3 Kbe8"),
+      VERIFY(pos.makeMove(Move(Piece("wg2"), "f3"_sq, pos)) == Position("Kwe1 wf3 Kbe8"),
              caseLabel);
-      VERIFY(pos.makeMove(Move(Piece("Bbf3"), Square("g2"), pos)) ==
+      VERIFY(pos.makeMove(Move(Piece("Bbf3"), "g2"_sq, pos)) ==
                 Position("Kwe1 Kbe8 Bbg2"),
              caseLabel);
    }

@@ -80,6 +80,11 @@ inline bool operator!=(Square a, Square b)
    return !(a == b);
 }
 
+inline Square operator"" _sq(const char* str, std::size_t)
+{
+   return Square{str};
+}
+
 
 ///////////////////
 
