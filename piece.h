@@ -199,6 +199,11 @@ inline bool operator==(const std::optional<Piece>& a, const Piece& b)
    return b == a;
 }
 
+inline Piece operator"" _pc(const char* str, std::size_t)
+{
+   return Piece{str};
+}
+
 
 ///////////////////
 

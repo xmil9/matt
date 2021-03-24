@@ -1164,6 +1164,18 @@ void testSwapPieces()
 }
 
 
+void testPieceLiteral()
+{
+   {
+      const std::string caseLabel = "Piece literal";
+
+      VERIFY("Kwe1"_pc == Piece("Kwe1"), caseLabel);
+      VERIFY("Qbc6"_pc == Piece("Qbc6"), caseLabel);
+      VERIFY("bh7"_pc == Piece("bh7"), caseLabel);
+   }
+}
+
+
 void testIsPawnOnInitialRank()
 {
    {
@@ -1280,6 +1292,7 @@ void testPiece()
    testPieceInequality();
    testPieceEqualityWithOptionalPiece();
    testSwapPieces();
+   testPieceLiteral();
 
    testIsPawnOnInitialRank();
    testPawnDirection();

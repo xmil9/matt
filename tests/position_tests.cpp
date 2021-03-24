@@ -32,12 +32,12 @@ void testPositionPiecesCtor()
    {
       const std::string caseLabel = "Position pieces ctor";
 
-      const std::vector<Piece> pieces{Piece{"Kwe1"}, Piece{"Kbe8"}};
+      const std::vector<Piece> pieces{"Kwe1"_pc, "Kbe8"_pc};
       const Position pos{pieces};
       VERIFY(pos.pieces(Color::Black).size() == 1, caseLabel);
       VERIFY(pos.pieces(Color::White).size() == 1, caseLabel);
-      VERIFY(pos["e1"_sq] == Piece{"Kwe1"}, caseLabel);
-      VERIFY(pos["e8"_sq] == Piece{"Kbe8"}, caseLabel);
+      VERIFY(pos["e1"_sq] == "Kwe1"_pc, caseLabel);
+      VERIFY(pos["e8"_sq] == "Kbe8"_pc, caseLabel);
    }
 }
 
@@ -50,8 +50,8 @@ void testPositionNotationCtor()
       const Position pos{"Kwe1 Kbe8"};
       VERIFY(pos.pieces(Color::Black).size() == 1, caseLabel);
       VERIFY(pos.pieces(Color::White).size() == 1, caseLabel);
-      VERIFY(pos[Square("e1")] == Piece{"Kwe1"}, caseLabel);
-      VERIFY(pos[Square("e8")] == Piece{"Kbe8"}, caseLabel);
+      VERIFY(pos[Square("e1")] == "Kwe1"_pc, caseLabel);
+      VERIFY(pos[Square("e8")] == "Kbe8"_pc, caseLabel);
    }
 }
 
@@ -89,8 +89,8 @@ void testPositionIndexOperator()
       const std::string caseLabel = "Position::operator[] for occupied square";
 
       const Position pos{"Kwe1 Kbe8"};
-      VERIFY(pos["e1"_sq] == Piece{"Kwe1"}, caseLabel);
-      VERIFY(pos["e8"_sq] == Piece{"Kbe8"}, caseLabel);
+      VERIFY(pos["e1"_sq] == "Kwe1"_pc, caseLabel);
+      VERIFY(pos["e8"_sq] == "Kbe8"_pc, caseLabel);
    }
    {
       const std::string caseLabel = "Position::operator[] for unoccupied square";
@@ -111,13 +111,13 @@ void testPositionPieces()
 
       const auto black = pos.pieces(Color::Black);
       VERIFY(black.size() == 2, caseLabel);
-      VERIFY(std::find(begin(black), end(black), Piece("Bbf8")) != end(black), caseLabel);
-      VERIFY(std::find(begin(black), end(black), Piece("Kbe8")) != end(black), caseLabel);
+      VERIFY(std::find(begin(black), end(black), "Bbf8"_pc) != end(black), caseLabel);
+      VERIFY(std::find(begin(black), end(black), "Kbe8"_pc) != end(black), caseLabel);
 
       const auto white = pos.pieces(Color::White);
       VERIFY(white.size() == 2, caseLabel);
-      VERIFY(std::find(begin(white), end(white), Piece("Kwe1")) != end(white), caseLabel);
-      VERIFY(std::find(begin(white), end(white), Piece("wg2")) != end(white), caseLabel);
+      VERIFY(std::find(begin(white), end(white), "Kwe1"_pc) != end(white), caseLabel);
+      VERIFY(std::find(begin(white), end(white), "wg2"_pc) != end(white), caseLabel);
    }
    {
       const std::string caseLabel = "Position::pieces for one piece";
@@ -126,11 +126,11 @@ void testPositionPieces()
 
       const auto black = pos.pieces(Color::Black);
       VERIFY(black.size() == 1, caseLabel);
-      VERIFY(std::find(begin(black), end(black), Piece("Kbe8")) != end(black), caseLabel);
+      VERIFY(std::find(begin(black), end(black), "Kbe8"_pc) != end(black), caseLabel);
 
       const auto white = pos.pieces(Color::White);
       VERIFY(white.size() == 1, caseLabel);
-      VERIFY(std::find(begin(white), end(white), Piece("Kwe1")) != end(white), caseLabel);
+      VERIFY(std::find(begin(white), end(white), "Kwe1"_pc) != end(white), caseLabel);
    }
    {
       const std::string caseLabel = "Position::pieces for no piece";
@@ -160,10 +160,9 @@ void testPositionMakeMove()
       const std::string caseLabel = "Position::makeMove for non-capturing move";
 
       const Position pos("Kwe1 wg2 Kbe8 Bbf8");
-      VERIFY(pos.makeMove(Move(Piece("wg2"), "g3"_sq, pos)) ==
-                Position("Kwe1 wg3 Kbe8 Bbf8"),
+      VERIFY(pos.makeMove(Move("wg2"_pc, "g3"_sq, pos)) == Position("Kwe1 wg3 Kbe8 Bbf8"),
              caseLabel);
-      VERIFY(pos.makeMove(Move(Piece("Kbe8"), "d7"_sq, pos)) ==
+      VERIFY(pos.makeMove(Move("Kbe8"_pc, "d7"_sq, pos)) ==
                 Position("Kwe1 wg2 Kbd7 Bbf8"),
              caseLabel);
    }
@@ -171,10 +170,9 @@ void testPositionMakeMove()
       const std::string caseLabel = "Position::makeMove for capturing move";
 
       const Position pos("Kwe1 wg2 Kbe8 Bbf3");
-      VERIFY(pos.makeMove(Move(Piece("wg2"), "f3"_sq, pos)) == Position("Kwe1 wf3 Kbe8"),
+      VERIFY(pos.makeMove(Move("wg2"_pc, "f3"_sq, pos)) == Position("Kwe1 wf3 Kbe8"),
              caseLabel);
-      VERIFY(pos.makeMove(Move(Piece("Bbf3"), "g2"_sq, pos)) ==
-                Position("Kwe1 Kbe8 Bbg2"),
+      VERIFY(pos.makeMove(Move("Bbf3"_pc, "g2"_sq, pos)) == Position("Kwe1 Kbe8 Bbg2"),
              caseLabel);
    }
 }

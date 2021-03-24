@@ -71,7 +71,7 @@ void testMoveFromAccessor()
    {
       const std::string caseLabel = "Move::from";
 
-      const Move m{Piece("Bwh4"), "e7"_sq, "Be7"};
+      const Move m{"Bwh4"_pc, "e7"_sq, "Be7"};
       VERIFY(m.from() == "h4"_sq, caseLabel);
    }
 }
@@ -94,8 +94,8 @@ void testMoveMovedPiece()
    {
       const std::string caseLabel = "Move::movedPiece";
 
-      const Move m{Piece("Bwh4"), "e7"_sq, "Be7"};
-      VERIFY(m.movedPiece() == Piece("Bwe7"), caseLabel);
+      const Move m{"Bwh4"_pc, "e7"_sq, "Be7"};
+      VERIFY(m.movedPiece() == "Bwe7"_pc, caseLabel);
    }
 }
 
@@ -105,13 +105,13 @@ void testMoveSwap()
    {
       const std::string caseLabel = "swap Move";
 
-      Move a{Piece("Bwh4"), "e7"_sq, "Be7"};
-      Move b{Piece("bb7"), "b6"_sq, "b6"};
+      Move a{"Bwh4"_pc, "e7"_sq, "Be7"};
+      Move b{"bb7"_pc, "b6"_sq, "b6"};
       swap(a, b);
-      VERIFY(a.piece() == Piece("bb7"), caseLabel);
+      VERIFY(a.piece() == "bb7"_pc, caseLabel);
       VERIFY(a.to() == "b6"_sq, caseLabel);
       VERIFY(a.notate() == "b6", caseLabel);
-      VERIFY(b.piece() == Piece("Bwh4"), caseLabel);
+      VERIFY(b.piece() == "Bwh4"_pc, caseLabel);
       VERIFY(b.to() == "e7"_sq, caseLabel);
       VERIFY(b.notate() == "Be7", caseLabel);
    }
@@ -123,16 +123,16 @@ void testMoveEquality()
    {
       const std::string caseLabel = "Move equality for equal moves";
 
-      const Move a{Piece("Bwh4"), "e7"_sq, "Be7"};
-      const Move b{Piece("Bwh4"), "e7"_sq, "Be7"};
+      const Move a{"Bwh4"_pc, "e7"_sq, "Be7"};
+      const Move b{"Bwh4"_pc, "e7"_sq, "Be7"};
       VERIFY(a == b, caseLabel);
    }
    {
       const std::string caseLabel = "Move equality for unequal moves";
 
-      const Move a{Piece("Rwh4"), "e4"_sq, "Re4"};
-      const Move b{Piece("Rwh4"), "h1"_sq, "Rh1"};
-      const Move c{Piece("Qwh4"), "e4"_sq, "Qe4"};
+      const Move a{"Rwh4"_pc, "e4"_sq, "Re4"};
+      const Move b{"Rwh4"_pc, "h1"_sq, "Rh1"};
+      const Move c{"Qwh4"_pc, "e4"_sq, "Qe4"};
       VERIFY(!(a == b), caseLabel);
       VERIFY(!(a == c), caseLabel);
    }
@@ -144,16 +144,16 @@ void testMoveInequality()
    {
       const std::string caseLabel = "Move inequality for equal moves";
 
-      const Move a{Piece("Bwh4"), "e7"_sq, "Be7"};
-      const Move b{Piece("Bwh4"), "e7"_sq, "Be7"};
+      const Move a{"Bwh4"_pc, "e7"_sq, "Be7"};
+      const Move b{"Bwh4"_pc, "e7"_sq, "Be7"};
       VERIFY(!(a != b), caseLabel);
    }
    {
       const std::string caseLabel = "Move inequality for unequal moves";
 
-      const Move a{Piece("Rwh4"), "e4"_sq, "Re4"};
-      const Move b{Piece("Rwh4"), "h1"_sq, "Rh1"};
-      const Move c{Piece("Qwh4"), "e4"_sq, "Qe4"};
+      const Move a{"Rwh4"_pc, "e4"_sq, "Re4"};
+      const Move b{"Rwh4"_pc, "h1"_sq, "Rh1"};
+      const Move c{"Qwh4"_pc, "e4"_sq, "Qe4"};
       VERIFY(a != b, caseLabel);
       VERIFY(a != c, caseLabel);
    }
@@ -165,19 +165,16 @@ void testNotateMove()
    {
       const std::string caseLabel = "notateMove for non-capturing moves";
 
-      VERIFY(notateMove(Piece("Qbd8"), "d5"_sq, Position("Qbd8")) == "Qd5", caseLabel);
-      VERIFY(notateMove(Piece("Kwe1"), "d2"_sq, Position("Kwe1")) == "Kd2", caseLabel);
-      VERIFY(notateMove(Piece("bf5"), "f4"_sq, Position("bf5")) == "f4", caseLabel);
+      VERIFY(notateMove("Qbd8"_pc, "d5"_sq, Position("Qbd8")) == "Qd5", caseLabel);
+      VERIFY(notateMove("Kwe1"_pc, "d2"_sq, Position("Kwe1")) == "Kd2", caseLabel);
+      VERIFY(notateMove("bf5"_pc, "f4"_sq, Position("bf5")) == "f4", caseLabel);
    }
    {
       const std::string caseLabel = "notateMove for capturing moves";
 
-      VERIFY(notateMove(Piece("Qbd8"), "d5"_sq, Position("Qbd8 Bwd5")) == "Qxd5",
-             caseLabel);
-      VERIFY(notateMove(Piece("Kwe1"), "d2"_sq, Position("Kwe1 bd2")) == "Kxd2",
-             caseLabel);
-      VERIFY(notateMove(Piece("bf5"), "e4"_sq, Position("bf5 Nwe4")) == "fxe4",
-             caseLabel);
+      VERIFY(notateMove("Qbd8"_pc, "d5"_sq, Position("Qbd8 Bwd5")) == "Qxd5", caseLabel);
+      VERIFY(notateMove("Kwe1"_pc, "d2"_sq, Position("Kwe1 bd2")) == "Kxd2", caseLabel);
+      VERIFY(notateMove("bf5"_pc, "e4"_sq, Position("bf5 Nwe4")) == "fxe4", caseLabel);
    }
 }
 
