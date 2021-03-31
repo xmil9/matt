@@ -132,7 +132,6 @@ class Piece
 
    Color color() const { return m_color; }
    Square coord() const { return m_coord; }
-   bool isFigure(Figure f) const { return m_figure == f; }
    Figure figure() const { return m_figure; }
    // Does not prevent moves that are illegal for the piece.
    Piece move(Square to) const;

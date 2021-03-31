@@ -25,7 +25,7 @@ std::string notateMove(const Piece& piece, Square to, const Position& pos)
    if (isCapture)
    {
       // For capturing pawn moves the departing file is notated.
-      if (piece.isFigure(Figure::Pawn))
+      if (piece.figure() == Figure::Pawn)
          notation += piece.coord().file();
       notation += "x";
    }

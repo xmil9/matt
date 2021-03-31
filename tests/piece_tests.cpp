@@ -124,7 +124,7 @@ void testPieceDefaultCtor()
       const std::string caseLabel = "Piece default ctor";
 
       const Piece p;
-      VERIFY(p.isFigure(Figure::Pawn), caseLabel);
+      VERIFY(p.figure() == Figure::Pawn, caseLabel);
       VERIFY(p.color() == Color::White, caseLabel);
       VERIFY(p.coord() == Square(), caseLabel);
    }
@@ -137,7 +137,7 @@ void testPieceCtor()
       const std::string caseLabel = "Piece ctor";
 
       const Piece p{Figure::King, Color::Black, Square{"c5"}};
-      VERIFY(p.isFigure(Figure::King), caseLabel);
+      VERIFY(p.figure() == Figure::King, caseLabel);
       VERIFY(p.color() == Color::Black, caseLabel);
       VERIFY(p.coord() == Square("c5"), caseLabel);
    }
@@ -150,7 +150,7 @@ void testPieceCtorWithLocationString()
       const std::string caseLabel = "Piece ctor with coordinate string";
 
       const Piece p{Figure::King, Color::Black, "c5"};
-      VERIFY(p.isFigure(Figure::King), caseLabel);
+      VERIFY(p.figure() == Figure::King, caseLabel);
       VERIFY(p.color() == Color::Black, caseLabel);
       VERIFY(p.coord() == Square("c5"), caseLabel);
    }
@@ -230,10 +230,10 @@ void testPieceIsFigure()
    {
       const std::string caseLabel = "Piece::isFigure";
 
-      VERIFY(Piece(Figure::King, Color::Black, "f4").isFigure(Figure::King), caseLabel);
-      VERIFY(!Piece(Figure::King, Color::Black, "f4").isFigure(Figure::Queen), caseLabel);
-      VERIFY(Piece(Figure::Pawn, Color::White, "h1").isFigure(Figure::Pawn), caseLabel);
-      VERIFY(!Piece(Figure::Pawn, Color::White, "b7").isFigure(Figure::Rook), caseLabel);
+      VERIFY(Piece(Figure::King, Color::Black, "f4").figure() == Figure::King, caseLabel);
+      VERIFY(Piece(Figure::King, Color::Black, "f4").figure() != Figure::Queen, caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "h1").figure() == Figure::Pawn, caseLabel);
+      VERIFY(Piece(Figure::Pawn, Color::White, "b7").figure() != Figure::Rook, caseLabel);
    }
 }
 
@@ -1154,10 +1154,10 @@ void testSwapPieces()
       Piece a{Figure::Bishop, Color::Black, "g4"};
       Piece b{Figure::Rook, Color::White, "c6"};
       swap(a, b);
-      VERIFY(a.isFigure(Figure::Rook), caseLabel);
+      VERIFY(a.figure() == Figure::Rook, caseLabel);
       VERIFY(a.color() == Color::White, caseLabel);
       VERIFY(a.coord() == "c6"_sq, caseLabel);
-      VERIFY(b.isFigure(Figure::Bishop), caseLabel);
+      VERIFY(b.figure() == Figure::Bishop, caseLabel);
       VERIFY(b.color() == Color::Black, caseLabel);
       VERIFY(b.coord() == "g4"_sq, caseLabel);
    }

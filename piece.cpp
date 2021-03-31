@@ -35,7 +35,7 @@ bool collectMoveTo(const Piece& piece, Square to, const Position& pos,
       // Occupied square:
       // - can move to it if occupied by other color (capture unless piece is a pawn)
       // - further squares in this direction are not accessible
-      if (occupant->color() != piece.color() && !piece.isFigure(Figure::Pawn))
+      if (occupant->color() != piece.color() && piece.figure() != Figure::Pawn)
          moves.push_back(Move(piece, to, pos));
    }
 
@@ -273,7 +273,7 @@ std::string Piece::notate(Notation format) const
 
 bool isPawnOnInitialRank(const Piece& pawn)
 {
-   if (!pawn.isFigure(Figure::Pawn))
+   if (pawn.figure() != Figure::Pawn)
       return false;
 
    const char initialRank = pawn.color() == Color::White ? '2' : '7';
@@ -283,7 +283,7 @@ bool isPawnOnInitialRank(const Piece& pawn)
 
 Offset pawnDirection(const Piece& pawn)
 {
-   if (!pawn.isFigure(Figure::Pawn))
+   if (pawn.figure() != Figure::Pawn)
       return {0, 0};
    return {0, pawn.color() == Color::White ? 1 : -1};
 }
