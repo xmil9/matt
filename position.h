@@ -34,6 +34,7 @@ class Position
    Iter at(Square coord);
    Citer at(Square coord) const;
    float calcScore() const;
+   float calcValue(const std::vector<Piece>& pieces) const;
 
  private:
    std::vector<Piece> m_pieces;
