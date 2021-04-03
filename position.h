@@ -51,3 +51,6 @@ inline bool operator!=(const Position& a, const Position& b)
 {
    return !(a == b);
 }
+
+
+extern const Position StartPos;
