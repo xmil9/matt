@@ -86,7 +86,7 @@ void testPositionScore()
              caseLabel);
       VERIFY(std::abs(Position("Bwc1").score()) >= std::abs(Position("Nwb1").score()),
              caseLabel);
-      VERIFY(std::abs(Position("Nwb1").score()) > std::abs(Position("a2").score()),
+      VERIFY(std::abs(Position("Nwb1").score()) > std::abs(Position("wa2").score()),
              caseLabel);
       VERIFY(std::abs(Position("Qbd8").score()) > std::abs(Position("Rba8").score()),
              caseLabel);
@@ -110,6 +110,11 @@ void testPositionScore()
       VERIFY(Position("Bbc8").score() < 0.f, caseLabel);
       VERIFY(Position("Nbb8").score() < 0.f, caseLabel);
       VERIFY(Position("ba7").score() < 0.f, caseLabel);
+   }
+   {
+      const std::string caseLabel = "Score is zero for starting position";
+
+      VERIFY(StartPos.score() == 0.f, caseLabel);
    }
 }
 
