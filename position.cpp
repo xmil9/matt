@@ -112,7 +112,7 @@ float Position::calcScore() const
 
 float Position::calcValue(const std::vector<Piece>& pieces) const
 {
-	static std::map<Figure, float> Values = {
+	static std::map<Figure, float> PieceValues = {
 		{ Figure::Pawn, 1.f },
 		{ Figure::Knight, 3.f },
 		{ Figure::Bishop, 3.f },
@@ -123,7 +123,7 @@ float Position::calcValue(const std::vector<Piece>& pieces) const
 
 	return std::accumulate(begin(pieces), end(pieces), 0.f,
 		[](const float& currValue, const Piece& piece) {
-			return currValue + Values[piece.figure()];
+			return currValue + PieceValues[piece.figure()];
 		});
 }
 
