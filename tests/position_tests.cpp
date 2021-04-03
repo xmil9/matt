@@ -58,7 +58,59 @@ void testPositionNotationCtor()
 
 void testPositionScore()
 {
-   // todo
+   {
+      const std::string caseLabel =
+         "Score for king is larger than all other pieces combined";
+
+      VERIFY(
+         std::abs(Position("Kwe1").score()) >
+            std::abs(
+               Position(
+                  "Rwa1 Nwb1 Bwc1 Qwd1 Bwf1 Nwg1 Rwh1 wa2 wb2 wc2 wd2 we2 wf2 wg2 wh2")
+                  .score()),
+         caseLabel);
+      VERIFY(
+         std::abs(Position("Kwe8").score()) >
+            std::abs(
+               Position(
+                  "Rwa8 Nwb8 Bwc8 Qwd8 Bwf8 Nwg8 Rwh8 ba7 bb7 bc7 bd7 be7 bf7 bg7 bh7")
+                  .score()),
+         caseLabel);
+   }
+   {
+      const std::string caseLabel = "Ordering of piece values";
+
+      VERIFY(std::abs(Position("Qwd1").score()) > std::abs(Position("Rwa1").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Rwa1").score()) > std::abs(Position("Bwc1").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Bwc1").score()) >= std::abs(Position("Nwb1").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Nwb1").score()) > std::abs(Position("a2").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Qbd8").score()) > std::abs(Position("Rba8").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Rba8").score()) > std::abs(Position("Bbc8").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Bbc8").score()) >= std::abs(Position("Nbb8").score()),
+             caseLabel);
+      VERIFY(std::abs(Position("Nbb8").score()) > std::abs(Position("ba7").score()),
+             caseLabel);
+   }
+   {
+      const std::string caseLabel = "White pieces are positive";
+
+      VERIFY(Position("Qwd1").score() > 0.f, caseLabel);
+      VERIFY(Position("Rwa1").score() > 0.f, caseLabel);
+      VERIFY(Position("Bwc1").score() > 0.f, caseLabel);
+      VERIFY(Position("Nwb1").score() > 0.f, caseLabel);
+      VERIFY(Position("wa2").score() > 0.f, caseLabel);
+      VERIFY(Position("Qbd8").score() < 0.f, caseLabel);
+      VERIFY(Position("Rba8").score() < 0.f, caseLabel);
+      VERIFY(Position("Bbc8").score() < 0.f, caseLabel);
+      VERIFY(Position("Nbb8").score() < 0.f, caseLabel);
+      VERIFY(Position("ba7").score() < 0.f, caseLabel);
+   }
 }
 
 
