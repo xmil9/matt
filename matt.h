@@ -4,11 +4,9 @@
 //
 #pragma once
 #include "piece.h"
+#include <cstdlib>
 
 class Position;
 
 
-// Makes move for given side.
-std::optional<Position> makeMove(const Position& pos, Color side);
-// Makes move for given piece.
-std::optional<Position> makeMove(const Position& pos, const Piece& piece);
+std::optional<Position> makeMove(const Position& pos, Color side, std::size_t depth);

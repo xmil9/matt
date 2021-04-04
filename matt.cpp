@@ -8,8 +8,11 @@
 #include <iterator>
 
 
-static std::optional<Position> bestPosition(const std::vector<Position>& positions,
-                                            Color side)
+namespace
+{
+///////////////////
+
+std::optional<Position> bestPosition(const std::vector<Position>& positions, Color side)
 {
    // Use best scoring next position depending on the piece's color.
    const auto endPos = end(positions);
@@ -25,21 +28,51 @@ static std::optional<Position> bestPosition(const std::vector<Position>& positio
 }
 
 
-std::optional<Position> makeMove(const Position& pos, Color side)
+std::vector<Position> allMoves(const Position& pos, Color side)
 {
-   // Collect best moves for each piece.
-   std::vector<Position> bestByPieces;
+   std::vector<Position> allMoves;
    const auto pieces = pos.pieces(side);
    for (const auto& piece : pieces)
-      if (const auto best = makeMove(pos, piece); best.has_value())
-         bestByPieces.push_back(*best);
+   {
+      const auto pieceMoves = piece.nextPositions(pos);
+      allMoves.insert(std::end(allMoves), std::begin(pieceMoves), std::end(pieceMoves));
+   }
 
-   // Find best move of of those.
-   return bestPosition(bestByPieces, side);
+   return allMoves;
 }
 
 
-std::optional<Position> makeMove(const Position& pos, const Piece& piece)
+std::optional<Position> makeMove_(const Position& pos, Color side, std::size_t depth)
 {
-   return bestPosition(piece.nextPositions(pos), piece.color());
+   const auto moves = allMoves(pos, side);
+
+   const std::vector<Position>* bestMoves = &moves;
+   std::vector<Position> bestNextMoves;
+   bestNextMoves.reserve(moves.size());
+
+   if (depth > 1)
+   {
+      for (const auto& move : moves)
+      {
+         if (const auto nextMove = makeMove_(move, !side, depth - 1);
+             nextMove.has_value())
+         {
+            bestNextMoves.push_back(*nextMove);
+         }
+      }
+
+      bestMoves = &bestNextMoves;
+   }
+
+   return bestPosition(*bestMoves, side);
+}
+
+} // namespace
+
+
+///////////////////
+
+std::optional<Position> makeMove(const Position& pos, Color side, std::size_t depth)
+{
+   return makeMove_(pos, side, 2 * depth - 1);
 }
