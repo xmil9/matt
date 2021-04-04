@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\matt_tests.cpp" />
+    <ClCompile Include="..\..\all_tests.cpp" />
     <ClCompile Include="..\..\move_tests.cpp" />
     <ClCompile Include="..\..\piece_tests.cpp" />
     <ClCompile Include="..\..\position_tests.cpp" />
