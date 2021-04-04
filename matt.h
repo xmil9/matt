@@ -9,4 +9,4 @@
 class Position;
 
 
-std::optional<Position> makeMove(const Position& pos, Color side, std::size_t depth);
+std::optional<Position> makeMove(const Position& pos, Color side, std::size_t turns);

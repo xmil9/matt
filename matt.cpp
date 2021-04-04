@@ -42,7 +42,7 @@ std::vector<Position> allMoves(const Position& pos, Color side)
 }
 
 
-std::optional<Position> makeMove_(const Position& pos, Color side, std::size_t depth)
+std::optional<Position> makeMove_(const Position& pos, Color side, std::size_t plies)
 {
    const auto moves = allMoves(pos, side);
 
@@ -50,11 +50,11 @@ std::optional<Position> makeMove_(const Position& pos, Color side, std::size_t d
    std::vector<Position> bestNextMoves;
    bestNextMoves.reserve(moves.size());
 
-   if (depth > 1)
+   if (plies > 1)
    {
       for (const auto& move : moves)
       {
-         if (const auto nextMove = makeMove_(move, !side, depth - 1);
+         if (const auto nextMove = makeMove_(move, !side, plies - 1);
              nextMove.has_value())
          {
             bestNextMoves.push_back(*nextMove);
@@ -72,7 +72,8 @@ std::optional<Position> makeMove_(const Position& pos, Color side, std::size_t d
 
 ///////////////////
 
-std::optional<Position> makeMove(const Position& pos, Color side, std::size_t depth)
+std::optional<Position> makeMove(const Position& pos, Color side, std::size_t turns)
 {
-   return makeMove_(pos, side, 2 * depth - 1);
+   // Convert turns (one move of each player) to plies (one move of one player).
+   return makeMove_(pos, side, 2 * turns);
 }
