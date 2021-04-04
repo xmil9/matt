@@ -8,5 +8,7 @@
 class Position;
 
 
+// Makes move for given side.
 std::optional<Position> makeMove(const Position& pos, Color side);
+// Makes move for given piece.
 std::optional<Position> makeMove(const Position& pos, const Piece& piece);
