@@ -285,6 +285,21 @@ void testPositionInequality()
    }
 }
 
+
+void testPositionLess()
+{
+   {
+      const std::string caseLabel = "Position less-than operator";
+
+      const Position a{"Kwe1"};
+      const Position b{"Kbe8"};
+
+      VERIFY(b < a, caseLabel);
+      VERIFY(!(a < b), caseLabel);
+      VERIFY(!(a < a), caseLabel);
+   }
+}
+
 } // namespace
 
 
@@ -303,4 +318,5 @@ void testPosition()
    testPositionMakeMove();
    testPositionEquality();
    testPositionInequality();
+   testPositionLess();
 }

@@ -52,5 +52,10 @@ inline bool operator!=(const Position& a, const Position& b)
    return !(a == b);
 }
 
+inline bool operator<(const Position& a, const Position& b)
+{
+   return a.score() < b.score();
+}
+
 
 extern const Position StartPos;
