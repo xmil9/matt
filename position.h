@@ -18,6 +18,7 @@ class Position
  public:
    Position() = default;
    explicit Position(const std::vector<Piece>& pieces);
+   explicit Position(std::vector<Piece>&& pieces);
    explicit Position(std::string_view notation);
 
    float score() const { return m_score; } 

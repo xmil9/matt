@@ -32,6 +32,12 @@ Position::Position(const std::vector<Piece>& pieces)
 }
 
 
+Position::Position(std::vector<Piece>&& pieces)
+: m_pieces{std::move(pieces)}, m_score{calcScore()}
+{
+}
+
+
 Position::Position(std::string_view notation)
 {
    const std::vector<std::string> pieceNotations =
@@ -63,6 +69,7 @@ std::optional<Piece> Position::operator[](Square coord) const
 std::vector<Piece> Position::pieces(Color side) const
 {
    std::vector<Piece> result;
+   result.reserve(m_pieces.size());
    std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(result),
                 [side](const auto& piece) { return piece.color() == side; });
    return result;
@@ -85,13 +92,14 @@ Position Position::makeMove(const Move& move) const
    const Square to = move.to();
 
    std::vector<Piece> nextPieces;
+   nextPieces.reserve(m_pieces.size());
    std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(nextPieces),
                 [&movingPiece, &to](const Piece& elem) {
                    // Skip moving piece and piece at moved-to coordinate.
                    return elem != movingPiece && elem.coord() != to;
                 });
    nextPieces.push_back(move.movedPiece());
-   return Position{nextPieces};
+   return Position{std::move(nextPieces)};
 }
 
 
