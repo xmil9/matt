@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\all_tests.cpp" />
+    <ClCompile Include="..\..\matt_tests.cpp" />
     <ClCompile Include="..\..\move_tests.cpp" />
     <ClCompile Include="..\..\piece_tests.cpp" />
     <ClCompile Include="..\..\position_tests.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="..\..\test_util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\matt_tests.h" />
     <ClInclude Include="..\..\move_tests.h" />
     <ClInclude Include="..\..\piece_tests.h" />
     <ClInclude Include="..\..\position_tests.h" />

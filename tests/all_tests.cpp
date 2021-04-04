@@ -2,6 +2,7 @@
 // Mar-2021, Michael Lindner
 // MIT license
 //
+#include "matt_tests.h"
 #include "move_tests.h"
 #include "piece_tests.h"
 #include "position_tests.h"
@@ -12,6 +13,7 @@
 
 int main()
 {
+   testMatt();
    testMove();
    testPiece();
    testPosition();
