@@ -252,6 +252,7 @@ std::vector<Position> Piece::nextPositions(const Position& pos) const
    const std::vector<Move> moves = nextMoves(pos);
 
    std::vector<Position> result;
+   result.reserve(moves.size());
    std::transform(begin(moves), end(moves), std::back_inserter(result),
                   [&pos](const auto& move) { return pos.makeMove(move); });
    return result;

@@ -43,6 +43,7 @@ Position::Position(std::string_view notation)
    const std::vector<std::string> pieceNotations =
       esl::split(std::string{notation}, PieceDelim);
 
+   m_pieces.reserve(pieceNotations.size());
    std::transform(begin(pieceNotations), end(pieceNotations),
                   std::back_inserter(m_pieces),
                   [](const std::string& pieceNotation) { return Piece(pieceNotation); });
