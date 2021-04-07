@@ -5,6 +5,7 @@
 #pragma once
 #include "piece.h"
 #include "record.h"
+#include <array>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,7 @@ class Position
    using Iter = std::vector<Piece>::iterator;
    using Citer = std::vector<Piece>::const_iterator;
 
+   void populateBoard();
    Iter at(Square coord);
    Citer at(Square coord) const;
    float calcScore() const;
@@ -39,6 +41,7 @@ class Position
 
  private:
    std::vector<Piece> m_pieces;
+   std::array<unsigned char, 64> m_board;
    Record m_record;
    float m_score = 0.f;
 };

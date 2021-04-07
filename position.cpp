@@ -23,18 +23,28 @@ const Position StartPos{"Rba8 Nbb8 Bbc8 Qbd8 Kbe8 Bbf8 Nbg8 Rbh8 "
 static constexpr char PieceDelimCh = ' ';
 static constexpr char PieceDelim[] = {PieceDelimCh};
 
+static constexpr unsigned char OccuppiedField = 1;
+static constexpr unsigned char EmptyField = 0;
+
+std::size_t BoardIndex(const Square& coord)
+{
+   return (coord.file() - 'a') * 8 + (coord.rank() - '1');
+}
+
 
 ///////////////////
 
 Position::Position(const std::vector<Piece>& pieces)
 : m_pieces{pieces}, m_score{calcScore()}
 {
+   populateBoard();
 }
 
 
 Position::Position(std::vector<Piece>&& pieces)
 : m_pieces{std::move(pieces)}, m_score{calcScore()}
 {
+   populateBoard();
 }
 
 
@@ -48,6 +58,7 @@ Position::Position(std::string_view notation)
                   std::back_inserter(m_pieces),
                   [](const std::string& pieceNotation) { return Piece(pieceNotation); });
 
+   populateBoard();
    m_score = calcScore();
 }
 
@@ -94,7 +105,7 @@ Position Position::makeMove(const Move& move) const
 
    std::vector<Piece> nextPieces;
    nextPieces.reserve(m_pieces.size());
-   std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(nextPieces),
+   std::copy_if(std::begin(m_pieces), std::end(m_pieces), std::back_inserter(nextPieces),
                 [&movingPiece, &to](const Piece& elem) {
                    // Skip moving piece and piece at moved-to coordinate.
                    return elem != movingPiece && elem.coord() != to;
@@ -104,17 +115,36 @@ Position Position::makeMove(const Move& move) const
 }
 
 
+void Position::populateBoard()
+{
+   memset(m_board.data(), EmptyField, m_board.size());
+
+   for (const auto& piece : m_pieces)
+      m_board[BoardIndex(piece.coord())] = OccuppiedField;
+}
+
+
 Position::Iter Position::at(Square coord)
 {
-   return std::find_if(begin(m_pieces), end(m_pieces),
-                       [&coord](const Piece& piece) { return piece.coord() == coord; });
+   if (m_board[BoardIndex(coord)] == OccuppiedField)
+   {
+      return std::find_if(
+         std::begin(m_pieces), std::end(m_pieces),
+         [&coord](const Piece& piece) { return piece.coord() == coord; });
+   }
+   return std::end(m_pieces);
 }
 
 
 Position::Citer Position::at(Square coord) const
 {
-   return std::find_if(begin(m_pieces), end(m_pieces),
-                       [&coord](const Piece& piece) { return piece.coord() == coord; });
+   if (m_board[BoardIndex(coord)] == OccuppiedField)
+   {
+      return std::find_if(
+         std::begin(m_pieces), std::end(m_pieces),
+         [&coord](const Piece& piece) { return piece.coord() == coord; });
+   }
+   return std::end(m_pieces);
 }
 
 
