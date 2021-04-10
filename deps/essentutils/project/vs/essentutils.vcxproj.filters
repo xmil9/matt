@@ -12,9 +12,11 @@
     <ClInclude Include="..\..\angle.h" />
     <ClInclude Include="..\..\observed.h" />
     <ClInclude Include="..\..\esl_api.h" />
+    <ClInclude Include="..\..\time_util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\string_util.cpp" />
     <ClCompile Include="..\..\filesys_win32.cpp" />
+    <ClCompile Include="..\..\time_util.cpp" />
   </ItemGroup>
 </Project>

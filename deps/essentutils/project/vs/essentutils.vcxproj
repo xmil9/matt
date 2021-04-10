@@ -45,11 +45,13 @@
     <ClInclude Include="..\..\rand_util.h" />
     <ClInclude Include="..\..\string_util.h" />
     <ClInclude Include="..\..\esl_api.h" />
+    <ClInclude Include="..\..\time_util.h" />
     <ClInclude Include="..\..\type_traits_util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\filesys_win32.cpp" />
     <ClCompile Include="..\..\string_util.cpp" />
+    <ClCompile Include="..\..\time_util.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

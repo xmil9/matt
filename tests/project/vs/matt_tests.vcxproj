@@ -36,6 +36,9 @@
     <ClInclude Include="..\..\test_util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\deps\essentutils\project\vs\essentutils.vcxproj">
+      <Project>{1c70ff5c-cdc9-426e-9c6a-922919183bab}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\project\vs\Matt.vcxproj">
       <Project>{9e87b945-3102-4e83-9894-8d1cf7caab78}</Project>
     </ProjectReference>
