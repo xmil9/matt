@@ -42,7 +42,10 @@ void testMakeMoveForPositionA()
 
    {
       const std::string casePrefix = "Position A with white for depth ";
+      esl::TimeMeasurement m{esl::TimeMeasurement::Start};
       testMakeMove(casePrefix, pos, 4, Color::White);
+      const auto tm = m.stop().length();
+      std::cout << tm << "\n";
    }
    {
       const std::string casePrefix = "Position A with black for depth ";
@@ -58,7 +61,10 @@ void testMakeMoveForPositionB()
 
    {
       const std::string casePrefix = "Position B with white for depth ";
+      esl::TimeMeasurement m{esl::TimeMeasurement::Start};
       testMakeMove(casePrefix, pos, 2, Color::White);
+      const auto tm = m.stop().length();
+      std::cout << tm << "\n";
    }
    {
       const std::string casePrefix = "Position B with black for depth ";
