@@ -5,6 +5,7 @@
 #pragma once
 #include "piece.h"
 #include "record.h"
+#include "dscpp/SboVector.h"
 #include <array>
 #include <string>
 #include <vector>
@@ -19,7 +20,7 @@ class Position
  public:
    Position() = default;
    explicit Position(const std::vector<Piece>& pieces);
-   explicit Position(std::vector<Piece>&& pieces);
+   explicit Position(ds::SboVector<Piece, 32>&& pieces);
    explicit Position(std::string_view notation);
 
    float score() const { return m_score; } 
@@ -30,8 +31,8 @@ class Position
    Position makeMove(const Move& move) const;
 
  private:
-   using Iter = std::vector<Piece>::iterator;
-   using Citer = std::vector<Piece>::const_iterator;
+   using Iter = ds::SboVector<Piece, 32>::iterator;
+   using Citer = ds::SboVector<Piece, 32>::const_iterator;
 
    void populateBoard();
    Iter at(Square coord);
@@ -40,7 +41,7 @@ class Position
    float calcValue(const std::vector<Piece>& pieces) const;
 
  private:
-   std::vector<Piece> m_pieces;
+   ds::SboVector<Piece, 32> m_pieces;
    std::array<unsigned char, 64> m_board;
    Record m_record;
    float m_score = 0.f;

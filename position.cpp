@@ -35,13 +35,13 @@ std::size_t BoardIndex(const Square& coord)
 ///////////////////
 
 Position::Position(const std::vector<Piece>& pieces)
-: m_pieces{pieces}, m_score{calcScore()}
+: m_pieces{pieces.begin(), pieces.end()}, m_score{calcScore()}
 {
    populateBoard();
 }
 
 
-Position::Position(std::vector<Piece>&& pieces)
+Position::Position(ds::SboVector<Piece, 32>&& pieces)
 : m_pieces{std::move(pieces)}, m_score{calcScore()}
 {
    populateBoard();
@@ -66,13 +66,13 @@ Position::Position(std::string_view notation)
 bool Position::isOccupiedBy(Square coord, Color byColor) const
 {
    const auto it = at(coord);
-   return it != end(m_pieces) && it->color() == byColor;
+   return it != m_pieces.end() && it->color() == byColor;
 }
 
 
 std::optional<Piece> Position::operator[](Square coord) const
 {
-   if (const auto it = at(coord); it != end(m_pieces))
+   if (const auto it = at(coord); it != m_pieces.end())
       return *it;
    return std::nullopt;
 }
@@ -82,7 +82,7 @@ std::vector<Piece> Position::pieces(Color side) const
 {
    std::vector<Piece> result;
    result.reserve(m_pieces.size());
-   std::copy_if(begin(m_pieces), end(m_pieces), std::back_inserter(result),
+   std::copy_if(m_pieces.begin(), m_pieces.end(), std::back_inserter(result),
                 [side](const auto& piece) { return piece.color() == side; });
    return result;
 }
@@ -91,7 +91,7 @@ std::vector<Piece> Position::pieces(Color side) const
 std::string Position::notate() const
 {
    std::stringstream notation;
-   std::transform(begin(m_pieces), end(m_pieces),
+   std::transform(m_pieces.begin(), m_pieces.end(),
                   std::ostream_iterator<std::string>(notation, PieceDelim),
                   [](const auto& piece) { return piece.notate(Piece::Notation::FCL); });
    return esl::trimRight(notation.str(), PieceDelimCh);
@@ -103,7 +103,7 @@ Position Position::makeMove(const Move& move) const
    const Piece movingPiece = move.piece();
    const Square to = move.to();
 
-   std::vector<Piece> nextPieces;
+   ds::SboVector<Piece, 32> nextPieces;
    nextPieces.reserve(m_pieces.size());
    std::copy_if(std::begin(m_pieces), std::end(m_pieces), std::back_inserter(nextPieces),
                 [&movingPiece, &to](const Piece& elem) {
@@ -175,7 +175,7 @@ bool operator==(const Position& a, const Position& b)
       return false;
 
    for (const Piece& piece : a.m_pieces)
-      if (std::find(begin(b.m_pieces), end(b.m_pieces), piece) == end(b.m_pieces))
+      if (std::find(b.m_pieces.begin(), b.m_pieces.end(), piece) == b.m_pieces.end())
          return false;
 
    return true;
