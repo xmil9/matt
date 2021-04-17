@@ -26,7 +26,7 @@ static constexpr char PieceDelim[] = {PieceDelimCh};
 static constexpr unsigned char OccuppiedField = 1;
 static constexpr unsigned char EmptyField = 0;
 
-std::size_t BoardIndex(const Square& coord)
+static std::size_t BoardIndex(const Square& coord)
 {
    return (coord.file() - 'a') * 8 + (coord.rank() - '1');
 }
