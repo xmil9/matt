@@ -20,15 +20,17 @@ class Position
  public:
    Position() = default;
    explicit Position(const std::vector<Piece>& pieces);
-   explicit Position(ds::SboVector<Piece, 32>&& pieces);
+   explicit Position(ds::SboVector<Piece, 32>&& pieces, Record&& record);
    explicit Position(std::string_view notation);
 
-   float score() const { return m_score; } 
+   float score() const { return m_score; }
    bool isOccupiedBy(Square coord, Color bySide) const;
    std::optional<Piece> operator[](Square coord) const;
    std::vector<Piece> pieces(Color side) const;
-   std::string notate() const;
    Position makeMove(const Move& move) const;
+   std::string notate() const;
+   std::string initialPosition() const { return m_record.initialPosition(); }
+   std::string moves() const { return m_record.moves(); }
 
  private:
    using Iter = ds::SboVector<Piece, 32>::iterator;

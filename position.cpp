@@ -35,20 +35,20 @@ static std::size_t BoardIndex(const Square& coord)
 ///////////////////
 
 Position::Position(const std::vector<Piece>& pieces)
-: m_pieces{pieces.begin(), pieces.end()}, m_score{calcScore()}
+: m_pieces{pieces.begin(), pieces.end()}, m_record{notate()}, m_score{calcScore()}
 {
    populateBoard();
 }
 
 
-Position::Position(ds::SboVector<Piece, 32>&& pieces)
-: m_pieces{std::move(pieces)}, m_score{calcScore()}
+Position::Position(ds::SboVector<Piece, 32>&& pieces, Record&& record)
+: m_pieces{std::move(pieces)}, m_record{std::move(record)}, m_score{calcScore()}
 {
    populateBoard();
 }
 
 
-Position::Position(std::string_view notation)
+Position::Position(std::string_view notation) : m_record{std::string{notation}}
 {
    const std::vector<std::string> pieceNotations =
       esl::split(std::string{notation}, PieceDelim);
@@ -103,15 +103,19 @@ Position Position::makeMove(const Move& move) const
    const Piece movingPiece = move.piece();
    const Square to = move.to();
 
-   ds::SboVector<Piece, 32> nextPieces;
-   nextPieces.reserve(m_pieces.size());
-   std::copy_if(std::begin(m_pieces), std::end(m_pieces), std::back_inserter(nextPieces),
+   ds::SboVector<Piece, 32> movedPieces;
+   movedPieces.reserve(m_pieces.size());
+   std::copy_if(std::begin(m_pieces), std::end(m_pieces), std::back_inserter(movedPieces),
                 [&movingPiece, &to](const Piece& elem) {
                    // Skip moving piece and piece at moved-to coordinate.
                    return elem != movingPiece && elem.coord() != to;
                 });
-   nextPieces.push_back(move.movedPiece());
-   return Position{std::move(nextPieces)};
+   movedPieces.push_back(move.movedPiece());
+
+   Record movedRecord = m_record;
+   movedRecord.add(move.notate());
+
+   return Position{std::move(movedPieces), std::move(movedRecord)};
 }
 
 

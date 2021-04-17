@@ -5,6 +5,7 @@
 #include "position_tests.h"
 #include "move.h"
 #include "position.h"
+#include "square.h"
 #include "test_util.h"
 #include <vector>
 
@@ -199,18 +200,6 @@ void testPositionPieces()
 }
 
 
-void testPositionNotate()
-{
-   {
-      const std::string caseLabel = "Position::notate";
-
-      VERIFY(Position("Kwe1 wg2 Kbe8 Bbf8").notate() == "Kwe1 wg2 Kbe8 Bbf8", caseLabel);
-      VERIFY(Position("Qbf3").notate() == "Qbf3", caseLabel);
-      VERIFY(Position().notate() == "", caseLabel);
-   }
-}
-
-
 void testPositionMakeMove()
 {
    {
@@ -231,6 +220,48 @@ void testPositionMakeMove()
              caseLabel);
       VERIFY(pos.makeMove(Move("Bbf3"_pc, "g2"_sq, pos)) == Position("Kwe1 Kbe8 Bbg2"),
              caseLabel);
+   }
+}
+
+
+void testPositionNotate()
+{
+   {
+      const std::string caseLabel = "Position::notate";
+
+      VERIFY(Position("Kwe1 wg2 Kbe8 Bbf8").notate() == "Kwe1 wg2 Kbe8 Bbf8", caseLabel);
+      VERIFY(Position("Qbf3").notate() == "Qbf3", caseLabel);
+      VERIFY(Position().notate() == "", caseLabel);
+   }
+}
+
+
+void testPositionMoves()
+{
+   {
+      const std::string caseLabel = "Position::moves before any moves";
+
+      const Position pos{"Kwe1 Kbe8"};
+      VERIFY(pos.moves().empty(), caseLabel);
+   }
+   {
+      const std::string caseLabel = "Position::moves after a move";
+
+      const Position pos{"Kwe1 Kbe8"};
+      const Position next = pos.makeMove(Move{*pos["e1"_sq], "e2"_sq, pos});
+      VERIFY(next.moves() == "Ke2", caseLabel);
+   }
+}
+
+
+void testPositionInitialPosition()
+{
+   {
+      const std::string caseLabel = "Position::initialPosition";
+
+      const std::string initialPos = "Kwe1 Kbe8";
+      const Position pos{initialPos};
+      VERIFY(pos.initialPosition() == initialPos, caseLabel);
    }
 }
 
@@ -314,8 +345,10 @@ void testPosition()
    testPositionIsOccupiedBy();
    testPositionIndexOperator();
    testPositionPieces();
-   testPositionNotate();
    testPositionMakeMove();
+   testPositionNotate();
+   testPositionInitialPosition();
+   testPositionMoves();
    testPositionEquality();
    testPositionInequality();
    testPositionLess();
