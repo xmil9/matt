@@ -28,6 +28,7 @@ class Square
 {
  public:
    Square() = default;
+   explicit Square(char file, char rank);
    explicit Square(std::string_view notation);
 
    char file() const { return m_file; }
@@ -47,6 +48,12 @@ class Square
    char m_file = 0;
    char m_rank = 0;
 };
+
+
+inline Square::Square(char file, char rank)
+   : m_file{file}, m_rank{rank}
+{
+}
 
 
 inline Square::Square(std::string_view notation) : Square{}
