@@ -70,6 +70,22 @@ bool Position::isOccupiedBy(Square coord, Color byColor) const
 }
 
 
+bool Position::canReach(Square coord, Color side) const
+{
+   for (const auto& piece : m_pieces)
+   {
+      if (piece.color() == side)
+      {
+         const auto reachable = piece.reachableSquares(*this);
+         if (std::find(reachable.begin(), reachable.end(), coord) != reachable.end())
+            return true;
+      }
+   }
+
+   return false;
+}
+
+
 std::optional<Piece> Position::operator[](Square coord) const
 {
    if (const auto it = at(coord); it != m_pieces.end())

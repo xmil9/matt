@@ -135,6 +135,7 @@ class Piece
    Figure figure() const { return m_figure; }
    // Does not prevent moves that are illegal for the piece.
    Piece move(Square to) const;
+   std::vector<Square> reachableSquares(const Position& pos) const;
    std::vector<Move> nextMoves(const Position& pos) const;
    std::vector<Position> nextPositions(const Position& pos) const;
 

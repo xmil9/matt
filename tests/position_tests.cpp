@@ -236,20 +236,20 @@ void testPositionNotate()
 }
 
 
-void testPositionMoves()
+void testPositionRecordedMoves()
 {
    {
       const std::string caseLabel = "Position::moves before any moves";
 
       const Position pos{"Kwe1 Kbe8"};
-      VERIFY(pos.moves().empty(), caseLabel);
+      VERIFY(pos.recordedMoves().empty(), caseLabel);
    }
    {
       const std::string caseLabel = "Position::moves after a move";
 
       const Position pos{"Kwe1 Kbe8"};
       const Position next = pos.makeMove(Move{*pos["e1"_sq], "e2"_sq, pos});
-      VERIFY(next.moves() == "Ke2", caseLabel);
+      VERIFY(next.recordedMoves() == "Ke2", caseLabel);
    }
 }
 
@@ -348,7 +348,7 @@ void testPosition()
    testPositionMakeMove();
    testPositionNotate();
    testPositionInitialPosition();
-   testPositionMoves();
+   testPositionRecordedMoves();
    testPositionEquality();
    testPositionInequality();
    testPositionLess();
