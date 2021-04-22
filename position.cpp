@@ -63,21 +63,21 @@ Position::Position(std::string_view notation) : m_record{std::string{notation}}
 }
 
 
-bool Position::isOccupiedBy(Square coord, Color byColor) const
+bool Position::isOccupiedBy(Square coord, Color side) const
 {
    const auto it = at(coord);
-   return it != m_pieces.end() && it->color() == byColor;
+   return it != m_pieces.end() && it->color() == side;
 }
 
 
-bool Position::canReach(Square coord, Color side) const
+bool Position::isThreatenedBy(Square coord, Color side) const
 {
    for (const auto& piece : m_pieces)
    {
       if (piece.color() == side)
       {
-         const auto reachable = piece.reachableSquares(*this);
-         if (std::find(reachable.begin(), reachable.end(), coord) != reachable.end())
+         const auto threatened = piece.threatenedSquares(*this);
+         if (std::find(threatened.begin(), threatened.end(), coord) != threatened.end())
             return true;
       }
    }

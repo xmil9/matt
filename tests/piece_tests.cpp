@@ -49,9 +49,8 @@ bool verifyNextMoves(const std::vector<Move>& moves, const Piece& piece,
 }
 
 
-bool verifyReachableSquares(const std::vector<Square>& squares, const Piece& piece,
-                            const Position& pos,
-                            const std::vector<std::string>& expectedLocations)
+bool verifySquares(const std::vector<Square>& squares, const Piece& piece,
+                   const Position& pos, const std::vector<std::string>& expectedLocations)
 {
    if (squares.size() != expectedLocations.size())
       return false;
@@ -406,11 +405,11 @@ void testPieceMove()
 }
 
 
-void testPieceReachableSquaresForKing()
+void testPieceThreatenedSquaresForKing()
 {
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for king without other pieces";
+         "Piece::threatenedSquares for king without other pieces";
 
       struct
       {
@@ -436,9 +435,9 @@ void testPieceReachableSquaresForKing()
       {
          Piece piece(test.piece);
          Position pos({piece});
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
@@ -466,9 +465,9 @@ void testPieceReachableSquaresForKing()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
@@ -496,19 +495,19 @@ void testPieceReachableSquaresForKing()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
 }
 
 
-void testPieceReachableSquaresForQueen()
+void testPieceThreatenedSquaresForQueen()
 {
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for queen without other pieces";
+         "Piece::threatenedSquares for queen without other pieces";
 
       struct
       {
@@ -544,14 +543,14 @@ void testPieceReachableSquaresForQueen()
       {
          Piece piece(test.piece);
          Position pos({piece});
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for queen with pieces of same color";
+         "Piece::threatenedSquares for queen with pieces of same color";
 
       struct
       {
@@ -587,14 +586,14 @@ void testPieceReachableSquaresForQueen()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for queen with pieces of other color";
+         "Piece::threatenedSquares for queen with pieces of other color";
 
       struct
       {
@@ -630,19 +629,19 @@ void testPieceReachableSquaresForQueen()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
 }
 
 
-void testPieceReachableSquaresForRook()
+void testPieceThreatenedSquaresForRook()
 {
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for rook without other pieces";
+         "Piece::threatenedSquares for rook without other pieces";
 
       struct
       {
@@ -686,14 +685,14 @@ void testPieceReachableSquaresForRook()
       {
          Piece piece(test.piece);
          Position pos({piece});
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for rook with pieces of same color";
+         "Piece::threatenedSquares for rook with pieces of same color";
 
       struct
       {
@@ -725,14 +724,14 @@ void testPieceReachableSquaresForRook()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for rook with pieces of other color";
+         "Piece::threatenedSquares for rook with pieces of other color";
 
       struct
       {
@@ -764,19 +763,19 @@ void testPieceReachableSquaresForRook()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
 }
 
 
-void testPieceReachableSquaresForBishop()
+void testPieceThreatenedSquaresForBishop()
 {
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for bishop without other pieces";
+         "Piece::threatenedSquares for bishop without other pieces";
 
       struct
       {
@@ -803,14 +802,14 @@ void testPieceReachableSquaresForBishop()
       {
          Piece piece(test.piece);
          Position pos({piece});
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for bishop with pieces of same color";
+         "Piece::threatenedSquares for bishop with pieces of same color";
 
       struct
       {
@@ -835,14 +834,14 @@ void testPieceReachableSquaresForBishop()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for bishop with pieces of other color";
+         "Piece::threatenedSquares for bishop with pieces of other color";
 
       struct
       {
@@ -869,19 +868,19 @@ void testPieceReachableSquaresForBishop()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
 }
 
 
-void testPieceReachableSquaresForKnight()
+void testPieceThreatenedSquaresForKnight()
 {
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for knight without other pieces";
+         "Piece::threatenedSquares for knight without other pieces";
 
       struct
       {
@@ -907,14 +906,14 @@ void testPieceReachableSquaresForKnight()
       {
          Piece piece(test.piece);
          Position pos({piece});
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for knight with pieces of same color";
+         "Piece::threatenedSquares for knight with pieces of same color";
 
       struct
       {
@@ -939,14 +938,14 @@ void testPieceReachableSquaresForKnight()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for knight with pieces of other color";
+         "Piece::threatenedSquares for knight with pieces of other color";
 
       struct
       {
@@ -971,44 +970,40 @@ void testPieceReachableSquaresForKnight()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
 }
 
 
-void testPieceReachableSquaresForPawn()
+void testPieceThreatenedSquaresForPawn()
 {
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for pawn without other pieces";
+         "Piece::threatenedSquares for pawn without other pieces";
 
       struct
       {
          std::string piece;
          std::vector<std::string> nextLocations;
       } testCases[] = {
-         // From starting square.
-         {"wd2", {"d3", "d4"}},
-         {"bh7", {"h6", "h5"}},
-         // From other square.
-         {"ba5", {"a4"}},
-         {"wg3", {"g4"}},
+         {"ba5", {"b4"}},
+         {"wg3", {"f4", "h4"}},
       };
       for (const auto& test : testCases)
       {
          Piece piece(test.piece);
          Position pos({piece});
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for pawn with pieces of same color";
+         "Piece::threatenedSquares for pawn with pieces of same color";
 
       struct
       {
@@ -1016,14 +1011,12 @@ void testPieceReachableSquaresForPawn()
          std::vector<std::string> otherPieces;
          std::vector<std::string> nextLocations;
       } testCases[] = {
-         // Not blocking.
-         {"wd2", {"Bwa5", "wc2"}, {"d3", "d4"}},
-         {"ba5", {"Bba3", "Qbc2"}, {"a4"}},
-         // Blocking a square.
-         {"wd2", {"Bwd4"}, {"d3"}},
-         // Blocking all squares.
-         {"wd2", {"Bwd3"}, {}},
-         {"ba5", {"Bba4"}, {}},
+         // Not on squares that pawn threatens.
+         {"wd2", {"Bwa5", "wc2"}, {"c3", "e3"}},
+         {"ba5", {"Bba3", "Qbc2"}, {"b4"}},
+         // On squares that pawn threatens.
+         {"wd2", {"Bwc3"}, {"e3"}},
+         {"bf5", {"Bbe4", "bg4"}, {}},
       };
       for (const auto& test : testCases)
       {
@@ -1033,14 +1026,14 @@ void testPieceReachableSquaresForPawn()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
    {
       const std::string caseLabel =
-         "Piece::reachableSquares for pawn with pieces of other color";
+         "Piece::threatenedSquares for pawn with pieces of other color";
 
       struct
       {
@@ -1048,19 +1041,14 @@ void testPieceReachableSquaresForPawn()
          std::vector<std::string> otherPieces;
          std::vector<std::string> nextLocations;
       } testCases[] = {
-         // Not blocking.
-         {"wd2", {"Bba5", "bc7"}, {"d3", "d4"}},
-         {"ba5", {"Bwa3", "Qwc2"}, {"a4"}},
-         // Blocking a square.
-         {"wd2", {"Bbd4"}, {"d3"}},
-         // Blocking all squares.
-         {"wd2", {"Bbd3"}, {}},
-         {"ba5", {"Bwa4"}, {}},
-         // Capturing.
-         {"wd2", {"Bbc3"}, {"d3", "d4", "c3"}},
-         {"we5", {"Bbf6"}, {"e6", "f6"}},
-         // Blocked and capturing.
-         {"bf6", {"Bbf5", "Qwe5"}, {"e5"}},
+         // Not on squares that pawn threatens.
+         {"wd2", {"Bba5", "bc7"}, {"c3", "e3"}},
+         {"ba5", {"Bwa3", "Qwc2"}, {"b4"}},
+         // On squares that pawn threatens.
+         {"wd2", {"Bbc3"}, {"c3", "e3"}},
+         {"ba5", {"Bwb4"}, {"b4"}},
+         {"wd2", {"Bbc3", "be3"}, {"c3", "e3"}},
+         {"bf6", {"Bwg5", "Qwe5"}, {"g5", "e5"}},
       };
       for (const auto& test : testCases)
       {
@@ -1070,9 +1058,9 @@ void testPieceReachableSquaresForPawn()
                         std::back_inserter(all),
                         [](const std::string& notation) { return Piece(notation); });
          Position pos(all);
-         VERIFY(verifyReachableSquares(piece.reachableSquares(pos), piece, pos,
-                                       test.nextLocations),
-                caseLabel);
+         VERIFY(
+            verifySquares(piece.threatenedSquares(pos), piece, pos, test.nextLocations),
+            caseLabel);
       }
    }
 }
@@ -1155,6 +1143,30 @@ void testPieceNextMovesForKing()
          {"Kwd4", {"bc3", "be3"}, {"c3", "c4", "c5", "d3", "d5", "e3", "e4", "e5"}},
          // Moves excludes because the king would be in check.
          {"Kbc4", {"Rwd5", "wh3"}, {"d5", "c3", "b4", "b3"}},
+      };
+      for (const auto& test : testCases)
+      {
+         Piece piece(test.piece);
+         std::vector<Piece> all{piece};
+         std::transform(begin(test.otherPieces), end(test.otherPieces),
+                        std::back_inserter(all),
+                        [](const std::string& notation) { return Piece(notation); });
+         Position pos(all);
+         VERIFY(verifyNextMoves(piece.nextMoves(pos), piece, pos, test.nextLocations),
+                caseLabel);
+      }
+   }
+   {
+      const std::string caseLabel =
+         "Piece::nextMoves for king that would lead to check by pawn";
+
+      struct
+      {
+         std::string piece;
+         std::vector<std::string> otherPieces;
+         std::vector<std::string> nextLocations;
+      } testCases[] = {
+         {"Kwd4", {"bd5"}, {"c5", "d5", "e5", "c3", "d3", "e3"}},
       };
       for (const auto& test : testCases)
       {
@@ -1979,12 +1991,12 @@ void testPiece()
    testPieceIsFigure();
    testPieceNotate();
    testPieceMove();
-   testPieceReachableSquaresForKing();
-   testPieceReachableSquaresForQueen();
-   testPieceReachableSquaresForRook();
-   testPieceReachableSquaresForBishop();
-   testPieceReachableSquaresForKnight();
-   testPieceReachableSquaresForPawn();
+   testPieceThreatenedSquaresForKing();
+   testPieceThreatenedSquaresForQueen();
+   testPieceThreatenedSquaresForRook();
+   testPieceThreatenedSquaresForBishop();
+   testPieceThreatenedSquaresForKnight();
+   testPieceThreatenedSquaresForPawn();
    testPieceNextMovesForKing();
    testPieceNextMovesForQueen();
    testPieceNextMovesForRook();

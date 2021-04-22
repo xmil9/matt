@@ -20,8 +20,8 @@ namespace
 
 // Adds a given square to a collection if the move is possible.
 // Returns whether the destination square was occupied by a piece.
-bool collectReachableSquare(const Piece& piece, Square to, const Position& pos,
-                            std::vector<Square>& squares)
+bool collectSquare(const Piece& piece, Square to, const Position& pos,
+                   std::vector<Square>& squares)
 {
    const auto& occupant = pos[to];
    if (!occupant)
@@ -45,13 +45,13 @@ bool collectReachableSquare(const Piece& piece, Square to, const Position& pos,
 
 
 // Adds the reachable squares in a given direction to a collection.
-void collectReachableSquaresInDirection(const Piece& piece, const Position& pos,
-                                        Offset dir, std::vector<Square>& squares)
+void collectSquaresInDirection(const Piece& piece, const Position& pos, Offset dir,
+                               std::vector<Square>& squares)
 {
    std::optional<Square> to = piece.coord() + dir;
    while (to.has_value())
    {
-      if (collectReachableSquare(piece, *to, pos, squares))
+      if (collectSquare(piece, *to, pos, squares))
          to = std::nullopt;
       else
          to = to + dir;
@@ -61,25 +61,25 @@ void collectReachableSquaresInDirection(const Piece& piece, const Position& pos,
 
 // Adds the reachable squares in given directions to a collection.
 template <typename DirectionIter>
-void collectReachableSquaresInDirections(const Piece& piece, const Position& pos,
-                                         DirectionIter first, DirectionIter last,
-                                         std::vector<Square>& squares)
+void collectSquaresInDirections(const Piece& piece, const Position& pos,
+                                DirectionIter first, DirectionIter last,
+                                std::vector<Square>& squares)
 {
    std::for_each(first, last, [&](const auto& dir) {
-      collectReachableSquaresInDirection(piece, pos, dir, squares);
+      collectSquaresInDirection(piece, pos, dir, squares);
    });
 }
 
 
 // Adds the reachable squares for given offsets to a collection.
 template <typename OffsetIter>
-void collectReachableSquares(const Piece& piece, const Position& pos, OffsetIter first,
-                             OffsetIter last, std::vector<Square>& squares)
+void collectSquares(const Piece& piece, const Position& pos, OffsetIter first,
+                    OffsetIter last, std::vector<Square>& squares)
 {
    std::for_each(first, last, [&](const auto& off) {
       std::optional<Square> to = piece.coord() + off;
       if (to.has_value())
-         collectReachableSquare(piece, *to, pos, squares);
+         collectSquare(piece, *to, pos, squares);
    });
 }
 
@@ -98,14 +98,14 @@ std::vector<Move> buildMoves(const Piece& piece, const std::vector<Square>& squa
 }
 
 
-// Check if a given king move leads to a check on the king.
-bool isCheck(const Position& pos, const Move& move)
+// Check if the king on a given square is in check.
+bool isCheck(const Position& pos, Square at)
 {
-   const Piece& moved = move.piece();
-   if (moved.figure() != Figure::King)
+   const auto piece = pos[at];
+   if (!piece.has_value() || piece->figure() != Figure::King)
       return false;
 
-   return pos.canReach(move.to(), !moved.color());
+   return pos.isThreatenedBy(at, !piece->color());
 }
 
 
@@ -113,14 +113,19 @@ bool isCheck(const Position& pos, const Move& move)
 void removeChecks(const Position& pos, std::vector<Move>& moves)
 {
    moves.erase(std::remove_if(moves.begin(), moves.end(),
-                              [&pos](const Move& move) { return isCheck(pos, move); }),
+                              [&pos](const Move& move) {
+                                 // Create the position and test for check.
+                                 return isCheck(pos.makeMove(move), move.to());
+                              }),
                moves.end());
 }
 
 
 ///////////////////
 
-std::vector<Square> kingSquares(const Piece& king, const Position& pos)
+// Returns collection of squares that a given king can move to using its basic
+// movement rule. Does not account for castling.
+std::vector<Square> kingBasicSquares(const Piece& king, const Position& pos)
 {
    assert(king.figure() == Figure::King);
    assert(pos[king.coord()] == king);
@@ -129,15 +134,26 @@ std::vector<Square> kingSquares(const Piece& king, const Position& pos)
                                               {0, -1},      {-1, 1}, {-1, 0}, {-1, -1}};
 
    std::vector<Square> to;
-   collectReachableSquares(king, pos, std::begin(Offsets), std::end(Offsets), to);
+   collectSquares(king, pos, std::begin(Offsets), std::end(Offsets), to);
    return to;
 }
 
 
+// Returns collection of squares that a given king is threatening.
+std::vector<Square> kingThreatenedSquares(const Piece& king, const Position& pos)
+{
+   // Ignore squares that can be reached by castling because castling is not allowed
+   // if the target square is occupied.
+   return kingBasicSquares(king, pos);
+}
+
+
+// Returns collection of moves that a given king can make.
 std::vector<Move> kingMoves(const Piece& king, const Position& pos)
 {
-   const std::vector<Square> to = kingSquares(king, pos);
+   const std::vector<Square> to = kingBasicSquares(king, pos);
    std::vector<Move> moves = buildMoves(king, to, pos);
+   // Special rule - king can not move into check.
    removeChecks(pos, moves);
    return moves;
 }
@@ -152,8 +168,7 @@ std::vector<Square> queenSquares(const Piece& queen, const Position& pos)
       Offset{1, 1}, {1, 0}, {1, -1}, {0, 1}, {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}};
 
    std::vector<Square> to;
-   collectReachableSquaresInDirections(queen, pos, begin(Directions), end(Directions),
-                                       to);
+   collectSquaresInDirections(queen, pos, begin(Directions), end(Directions), to);
    return to;
 }
 
@@ -172,7 +187,7 @@ std::vector<Square> rookSquares(const Piece& rook, const Position& pos)
    static const std::array<Offset, 4> Directions{Offset{1, 0}, {0, 1}, {0, -1}, {-1, 0}};
 
    std::vector<Square> to;
-   collectReachableSquaresInDirections(rook, pos, begin(Directions), end(Directions), to);
+   collectSquaresInDirections(rook, pos, begin(Directions), end(Directions), to);
    return to;
 }
 
@@ -192,8 +207,7 @@ std::vector<Square> bishopSquares(const Piece& bishop, const Position& pos)
       Offset{1, 1}, {-1, 1}, {1, -1}, {-1, -1}};
 
    std::vector<Square> to;
-   collectReachableSquaresInDirections(bishop, pos, begin(Directions), end(Directions),
-                                       to);
+   collectSquaresInDirections(bishop, pos, begin(Directions), end(Directions), to);
    return to;
 }
 
@@ -213,7 +227,7 @@ std::vector<Square> knightSquares(const Piece& knight, const Position& pos)
                                               {1, 2},       {-1, 2}, {1, -2}, {-1, -2}};
 
    std::vector<Square> to;
-   collectReachableSquares(knight, pos, begin(Offsets), end(Offsets), to);
+   collectSquares(knight, pos, begin(Offsets), end(Offsets), to);
    return to;
 }
 
@@ -224,7 +238,10 @@ std::vector<Move> knightMoves(const Piece& knight, const Position& pos)
 }
 
 
-std::vector<Square> pawnSquares(const Piece& pawn, const Position& pos)
+// Returns collection of squares that a given pawn can move to using its basic
+// movement rule. Does not include squares reached by capturing diagonally or
+// en passant.
+std::vector<Square> pawnBasicSquares(const Piece& pawn, const Position& pos)
 {
    assert(pawn.figure() == Figure::Pawn);
    assert(pos[pawn.coord()] == pawn);
@@ -234,7 +251,7 @@ std::vector<Square> pawnSquares(const Piece& pawn, const Position& pos)
 
    // Move one square forward.
    if (const auto to = pawn.coord() + dir; to.has_value())
-      collectReachableSquare(pawn, *to, pos, squares);
+      collectSquare(pawn, *to, pos, squares);
 
    // Move two squares forward from starting square.
    if (isPawnOnInitialRank(pawn) &&
@@ -242,28 +259,37 @@ std::vector<Square> pawnSquares(const Piece& pawn, const Position& pos)
        !squares.empty())
    {
       if (const auto to = pawn.coord() + 2 * dir; to.has_value())
-         collectReachableSquare(pawn, *to, pos, squares);
+         collectSquare(pawn, *to, pos, squares);
    }
+
+   return squares;
+}
+
+
+std::vector<Square> pawnThreatenedSquares(const Piece& pawn, const Position& pos)
+{
+   assert(pawn.figure() == Figure::Pawn);
+
+   std::vector<Square> squares;
+   const Offset dir = pawnDirection(pawn);
 
    // Capture diagonally on lower file.
    if (const auto to = pawn.coord() + dir + Offset{-1, 0}; to.has_value())
-   {
+      // Only if square is not occupied by the same color.
       if (const auto target = pos[*to];
-          target.has_value() && pawn.color() != target->color())
+          !target.has_value() || pawn.color() != target->color())
       {
          squares.push_back(*to);
       }
-   }
 
    // Capture diagonally on higher file.
    if (const auto to = pawn.coord() + dir + Offset{1, 0}; to.has_value())
-   {
+      // Only if square is not occupied by the same color.
       if (const auto target = pos[*to];
-          target.has_value() && pawn.color() != target->color())
+          !target.has_value() || pawn.color() != target->color())
       {
          squares.push_back(*to);
       }
-   }
 
    // todo - capture en passant
 
@@ -273,7 +299,20 @@ std::vector<Square> pawnSquares(const Piece& pawn, const Position& pos)
 
 std::vector<Move> pawnMoves(const Piece& pawn, const Position& pos)
 {
-   return buildMoves(pawn, pawnSquares(pawn, pos), pos);
+   auto squares = buildMoves(pawn, pawnBasicSquares(pawn, pos), pos);
+
+   // Add squares that pawn can capture on if occupied by opposite piece.
+   const auto threatened = pawnThreatenedSquares(pawn, pos);
+   for (const auto& sq : threatened)
+   {
+      if (const auto target = pos[sq];
+          target.has_value() && pawn.color() != target->color())
+      {
+         squares.push_back(Move{pawn, sq, pos});
+      }
+   }
+
+   return squares;
 }
 
 } // namespace
@@ -307,12 +346,12 @@ Piece::Piece(std::string_view notation, Color side)
 }
 
 
-std::vector<Square> Piece::reachableSquares(const Position& pos) const
+std::vector<Square> Piece::threatenedSquares(const Position& pos) const
 {
    switch (m_figure)
    {
    case Figure::King:
-      return kingSquares(*this, pos);
+      return kingThreatenedSquares(*this, pos);
    case Figure::Queen:
       return queenSquares(*this, pos);
    case Figure::Rook:
@@ -322,7 +361,7 @@ std::vector<Square> Piece::reachableSquares(const Position& pos) const
    case Figure::Knight:
       return knightSquares(*this, pos);
    case Figure::Pawn:
-      return pawnSquares(*this, pos);
+      return pawnThreatenedSquares(*this, pos);
    default:
       assert(false && "Invalid figure");
       return {};

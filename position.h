@@ -24,8 +24,8 @@ class Position
    explicit Position(std::string_view notation);
 
    float score() const { return m_score; }
-   bool isOccupiedBy(Square coord, Color bySide) const;
-   bool canReach(Square coord, Color side) const;
+   bool isOccupiedBy(Square coord, Color side) const;
+   bool isThreatenedBy(Square coord, Color side) const;
    std::optional<Piece> operator[](Square coord) const;
    std::vector<Piece> pieces(Color side) const;
    Position makeMove(const Move& move) const;
